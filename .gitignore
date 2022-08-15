@@ -8,7 +8,7 @@ application-db.properties
 application-jwt.properties
 
 # Backend QueryDsl Generated Dir
-backend/src/main/generated
+backend/src/querydsl/generated
 
 # Frontend Auth file
 promise_app/src/utils/oauth/index.js
