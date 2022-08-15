@@ -14,53 +14,52 @@ public class PetServiceImpl implements PetService{
 
 	@Autowired
 	UserService userService;
-	
+
 	@Autowired
 	PetRepository petRepository;
-	
+
 	@Autowired
 	UserRepository userRepository;
-	
+
 	@Override
 	public int increasePetExp(int petExp, User user) {
 		try {
 			Pet pet = petRepository.findPetByUser(user);
-			
+
 			// 경험치 증가
 			int incExp = pet.getPetExp() + petExp;
-			pet.setPetExp(incExp);
-			
+			pet.updatePetExp(incExp);
+
 			// 경험치 점수에 따른 레벨 변경
 			if(100 <= incExp && incExp < 500) {
-				pet.setPetLevel(2);
+				pet.updatePetLevel(2);
 			} else if(500 <= incExp && incExp < 1000) {
-				pet.setPetLevel(3);
+				pet.updatePetLevel(3);
 			} else if(1000 <= incExp && incExp < 10000){
-				pet.setPetLevel(4);
+				pet.updatePetLevel(4);
 			} else if(incExp >= 10000) {
-				pet.setPetLevel(5);
-			} else {
+				pet.updatePetLevel(5);
 			}
-			
+
 			petRepository.save(pet);
-			
+
 			return 1;
 		} catch(Exception e) {
 			return -1;
 		}
 	}
-		
+
 	@Override
 	public Pet insertPet(UserInsertPostReq userInsertInfo) {
-		Pet pet = new Pet();
 		User user = userService.getUserByUserEmail(userInsertInfo.getUserEmail());
-		
-		pet.setUser(user);
-		pet.setPetName(userInsertInfo.getPetName());
-		pet.setPetLevel(1);
-		
+		Pet pet = Pet.builder()
+				.user(user)
+				.petName(userInsertInfo.getPetName())
+				.petLevel(1)
+				.build();
+
 		return petRepository.save(pet);
 
-	}	
+	}
 
 }

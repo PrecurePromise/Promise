@@ -2,13 +2,12 @@ package com.pjt3.promise.entity;
 
 import javax.persistence.*;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
-@Setter
 @Table(name="Pet")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Pet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +26,23 @@ public class Pet {
 
     @Column(name="pet_exp")
     int petExp;
+
+    public void updatePetLevel(int petLevel){
+        this.petLevel = petLevel;
+    }
+
+    public void updatePetExp(int petExp){
+        this.petExp = petExp;
+    }
+
+    public void givePetName(String petName){
+        this.petName = petName;
+    }
+
+    @Builder
+    public Pet(User user, String petName, int petLevel){
+        this.user = user;
+        this.petName = petName;
+        this.petLevel = petLevel;
+    }
 }
