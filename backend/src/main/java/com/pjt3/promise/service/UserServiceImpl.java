@@ -20,16 +20,16 @@ import com.pjt3.promise.response.UserInfoGetRes;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
-	
+
 	@Autowired
 	UserRepository userRepository;
-	
+
 	@Autowired
 	PetRepository petRepository;
-	
+
 	@Autowired
 	PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	UserRepositorySupport userRepositorySupport;
 
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 				.userProfileUrl(userInsertInfo.getUserProfileUrl())
 				.userJoinType(userInsertInfo.getUserJoinType())
 				.build();
-		
+
 		return userRepository.save(user);
 	}
 
@@ -76,19 +76,19 @@ public class UserServiceImpl implements UserService {
 			String userNickname = userUpdateInfo.getUserNickname();
 			String petName = userUpdateInfo.getPetName();
 			Pet pet = petRepository.findPetByUser(user);
-			
+
 			if(userRepository.findUserByUserNickname(userNickname) != null &&
 					!user.getUserNickname().equals(userNickname)){
-						return 2;
-					}
+				return 2;
+			}
 
-			pet.setPetName(petName);
-			
+			pet.givePetName(petName);
+
 			userUpdateInfo.setUserNickname(userNickname);
 			BeanUtils.copyProperties(userUpdateInfo, user);
 			userRepository.save(user);
 			return 1;
-			
+
 		} catch(Exception e) {
 			e.printStackTrace();
 			return 0;
@@ -112,28 +112,28 @@ public class UserServiceImpl implements UserService {
 	public UserInfoGetRes getUserInfo(User user) {
 		UserInfoGetRes userInfo = new UserInfoGetRes();
 		Pet pet = petRepository.findPetByUser(user);
-		
+
 		userInfo.setStatusCode(200);
 		userInfo.setMessage("조회에 성공했습니다.");
 		userInfo.setPetName(pet.getPetName());
 		userInfo.setPetLevel(pet.getPetLevel());
-		
+
 		BeanUtils.copyProperties(user, userInfo);
-		
+
 		return userInfo;
 	}
 
 	@Override
 	public List<ShareUserGetRes> getShareUserList(String searchKeyword, String userEmail, String userNickname) {
 		List<ShareUserGetRes> shareUserList = userRepositorySupport.getShareUserList(searchKeyword);
-		
+
 		for (ShareUserGetRes shareUserGetRes : shareUserList) {
 			if (shareUserGetRes.getUserEmail().equals(userEmail) && shareUserGetRes.getUserNickname().equals(userNickname)) {
 				shareUserList.remove(shareUserGetRes);
 				break;
 			}
 		}
-		
+
 		return shareUserList;
 	}
 
