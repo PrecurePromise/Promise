@@ -17,10 +17,11 @@ configurations {
 	}
 }
 
+// querydsl 설정 시작
 clean {
-	delete file('src/main/generated')
+	delete file('src/querydsl')
 }
-def querydslDir = 'src/main/generated'
+def querydslDir = 'src/querydsl/generated'
 querydsl {
 	jpa = true
 	querydslSourcesDir = querydslDir
