@@ -31,17 +31,18 @@ public class PharmacyServiceImpl implements PharmacyService {
 		
 		
 		for (PharmacyDistanceInterface pharmacy : pharmacyList) {
-			PharmacyGetRes pharmacyGetRes = new PharmacyGetRes();
 			Double distance = pharmacy.getDistance() * 1000;
 			int intDistance = distance.intValue();
-					
-			pharmacyGetRes.setPharmId(pharmacy.getPharmId());
-			pharmacyGetRes.setPharmName(pharmacy.getPharmName());
-			pharmacyGetRes.setPharmAddr(pharmacy.getPharmAddr());
-			pharmacyGetRes.setPharmTel(pharmacy.getPharmTel());
-			pharmacyGetRes.setPharmLat(pharmacy.getPharmLat());
-			pharmacyGetRes.setPharmLong(pharmacy.getPharmLong());
-			pharmacyGetRes.setDistance(intDistance);
+
+			PharmacyGetRes pharmacyGetRes = PharmacyGetRes.builder()
+							.pharmId(pharmacy.getPharmId())
+							.pharmName(pharmacy.getPharmName())
+							.pharmAddr(pharmacy.getPharmAddr())
+							.pharmTel(pharmacy.getPharmTel())
+							.pharmLat(pharmacy.getPharmLat())
+							.pharmLong(pharmacy.getPharmLong())
+							.distance(intDistance)
+							.build();
 			
 			pharmacyListGetRes.add(pharmacyGetRes);
 		}
