@@ -57,8 +57,7 @@
 
 ## Deploy
 <img style="display: inline;" alt="aws" src ="https://img.shields.io/badge/aws-%23232F3E.svg?&style=for-the-badge&logo=amazon aws&logoColor=white"/>
-<img style="display: inline;" alt="jenkins" src ="https://img.shields.io/badge/jenkins-%232C5263.svg?style=for-the-badge&logo=jenkins&logoColor=white"/><img style="display: inline;" alt="nginx" src ="https://img.shields.io/badge/nginx-%23009639.svg?&style=for-the-badge&logo=nginx&logoColor=white"/><img style="display: inline;" alt="docker" src ="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"/><img style="display: inline;" alt="s3" src ="https://img.shields.io/badge/s3-%23569A31.svg?&style=for-the-badge&logo=amazon s3&logoColor=white"/>  
-
+<img style="display: inline;" alt="jenkins" src ="https://img.shields.io/badge/jenkins-%232C5263.svg?style=for-the-badge&logo=jenkins&logoColor=white"/><img style="display: inline;" alt="nginx" src ="https://img.shields.io/badge/nginx-%23009639.svg?&style=for-the-badge&logo=nginx&logoColor=white"/><img style="display: inline;" alt="docker" src ="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"/><img style="display: inline;" alt="s3" src ="https://img.shields.io/badge/s3-%23569A31.svg?&style=for-the-badge&logo=amazon s3&logoColor=white"/>
 - [AWS](https://aws.amazon.com/ko/?nc2=h_lg)
 - [NginX](https://www.nginx.com/)
 - [Docker](https://www.docker.com/)
@@ -75,41 +74,39 @@ Social Login (Google & Apple)
 
 
 ## Main
-오늘 진행되는 알람 목록, 전체 사용자의 태그 통계 시각화와 사용자의 큐어 캐릭터
+오늘 진행되는 알람 목록
+| **오늘의 약속**  | **오늘의 약속(약속이 없는 경우)**  |  **오늘의 약속(최초 실행)**  |  
+| :--------: | :--------: | :--------: | 
+|<img src="https://i.imgur.com/KvLt2P8.jpg" width="150">|<img src="https://i.imgur.com/SrrR7tv.jpg" width="150">|<img src="https://i.imgur.com/beEBDB0.jpg" width="150">|
 
-| **시각화**  | **펫**  |
-| :--------: | :--------: |
-|<img src="https://i.imgur.com/egpfqs1.png" width="150">|<img src="https://i.imgur.com/8xADrPt.jpg" width="150">|
 
 ## Calendar, Alarm, Timeline
 OCR을 통한 약 등록과 타 사용자와 알람 공유, 현재 진행중인 알람과 지난 알람  
 | **달력**  | **알람등록**  |  **진행중인 알람**  |  **Timeline**  |
 | :--------: | :--------: | :--------: | :--------: |
-|<img src="https://i.imgur.com/JRH7Cim.png" width="150">|<img src="https://i.imgur.com/C9WPo8V.png" width="150">|<img src="https://i.imgur.com/XPWfsTr.png" width="150">|<img src="https://i.imgur.com/GdSTnuh.png" width="150">|
+|<img src="https://i.imgur.com/Tv40ghs.jpg" width="150">|<img src="https://i.imgur.com/9gAbANj.png" width="150">|<img src="https://i.imgur.com/PRXyijD.png" width="150">|<img src="https://i.imgur.com/TlgYxd8.png" width="160">|
+
 
 ## My Pill
 현재 복용중인 약 리스트와 복용 이력 조회 
 
 | **복용중인 리스트**  | **복용 약 상세**  |  **복용 이력**  | 
 | :--------: | :--------: | :--------: |
-|<img src="https://i.imgur.com/pOnICwR.png" width="150">|<img src="https://i.imgur.com/Yl3hgoR.png" width="150">|<img src="https://i.imgur.com/Hbcr0Q6.png" width="150">|
+|<img src="https://i.imgur.com/UcPhpOB.png" width="150">|<img src="https://i.imgur.com/awr4YgD.png" width="150">|<img src="https://i.imgur.com/RosO6Wp.png" width="150">|
 
-## Search, Info!
+## Search, Info
 
 약 이름 검색과 약 상세 정보 제공  
 | **검색**  | **약 상세**  | 
 | :--------: | :--------: |
-|<img src="https://i.imgur.com/joE2Mlx.png" width="150">|<img src="https://i.imgur.com/r5ECPoY.png" width="150">|
+|<img src="https://i.imgur.com/eZUZ0Ci.png" width="150">|<img src="https://i.imgur.com/ndS2E2w.png" width="150">|
+
 
 ## Pharmacy Location
 현재 위치와 시간을 기반으로 영업 중인 약국 정보를 거리순으로 제공  
 
-<img src="https://i.imgur.com/WrsEFvq.jpg" width="150">
+<img src="https://i.imgur.com/xwqxDhm.jpg" width="150">
 
-## Community
-사용자들 간의 자유로운 소통 공간  
-
-<img src="https://i.imgur.com/Vrt4QQe.png" width="150">
 
 <br>
 <br>
@@ -197,6 +194,6 @@ java -jar [생성된 스냅샷파일 이름].jar
 # Contributor
 
 |<img src="https://i.imgur.com/TxP2QeJ.png" width="150">|<img src="https://i.imgur.com/cGdJ9mK.png" width="150">|<img src="https://i.imgur.com/GxjOzbo.png" width="150">|<img src="https://i.imgur.com/2CWF5Pc.png" width="150">|
-| :--------: | :--------: | :--------: | :--------: |
-| **서민영** <a href="https://github.com/smy999"><img src="https://i.imgur.com/SBDd7pE.png" width="20"></a> <br> Minyeong Seo | **서요셉** <a href="https://github.com/yoseph0310"><img src="https://i.imgur.com/SBDd7pE.png" width="20"></a> <br> Yosep Seo | **이가빈** <a href="https://github.com/Ariel-G-Lee"><img src="https://i.imgur.com/SBDd7pE.png" width="20"></a> <br> Gavin Lee | **허애리** <a href="https://github.com/aeriheo"><img src="https://i.imgur.com/SBDd7pE.png" width="20"></a> <br> Aeri Heo | 
+| :--------: | :--------: | :--------: | :--------: | 
+| **서민영** <a href="https://github.com/smy999"><img src="https://i.imgur.com/SBDd7pE.png" width="20"></a> <br> Minyeong Seo | **서요셉** <a href="https://github.com/yoseph0310"><img src="https://i.imgur.com/SBDd7pE.png" width="20"></a> <br> Yosep Seo | **이가빈** <a href="https://github.com/Ariel-G-Lee"><img src="https://i.imgur.com/SBDd7pE.png" width="20"></a> <br> Gavin Lee | **허애리** <a href="https://github.com/aeriheo"><img src="https://i.imgur.com/SBDd7pE.png" width="20"></a> <br> Aeri Heo | |
 |Backend<br>Design|Backend<br>Server|Backend<br>Video Director|Frontend<br> Scenario|
