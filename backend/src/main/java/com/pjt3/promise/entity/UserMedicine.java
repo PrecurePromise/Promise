@@ -15,7 +15,7 @@ public class UserMedicine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="um_id")
-    int unId;
+    int umId;
 
     @JsonBackReference
     @ManyToOne
