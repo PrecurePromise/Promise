@@ -260,12 +260,14 @@ public class AlarmServiceImpl implements AlarmService {
 	@Override
 	public int insertTakeHistory(User user, TakeHistoryPostReq takeHistoryPostReq) {
 		try {
-			TakeHistory takeHistory = new TakeHistory();
-			takeHistory.setUser(user);
-			takeHistory.setMediAlarm(mediAlarmRepository.findMediAlarmByAlarmId(takeHistoryPostReq.getAlarmId()));
-			takeHistory.setThYN(takeHistoryPostReq.getThYN());
+			TakeHistory takeHistory = TakeHistory.builder()
+					.user(user)
+					.mediAlarm(mediAlarmRepository.findMediAlarmByAlarmId(takeHistoryPostReq.getAlarmId()))
+					.thYN(takeHistoryPostReq.getThYN())
+					.build();
 			if (takeHistoryPostReq.getThYN() == 1) {
-				takeHistory.setThTime(Timestamp.valueOf(LocalDateTime.now()));
+				takeHistory.initThTime(Timestamp.valueOf(LocalDateTime.now()));
+
 			}
 
 			takeHistoryRepository.save(takeHistory);
