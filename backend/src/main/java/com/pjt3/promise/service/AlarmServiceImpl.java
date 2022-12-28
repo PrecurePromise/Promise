@@ -165,13 +165,13 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 	public void alarmShareUserMedicineSetting(AlarmShare alarmShare, List<String> alarmMediList) {
-		for (String mediName : alarmMediList) {
+		for (String asumMediName : alarmMediList) {
 
-			AlarmShareUserMedicine alarmShareUserMedicine = new AlarmShareUserMedicine();
-			alarmShareUserMedicine.setAlarmShare(alarmShare);
-			alarmShareUserMedicine.setAsumName(mediName);
-			alarmShareUserMedicine.setMedicine(medicineRepository.findMedicineByMediName(mediName));
-
+			AlarmShareUserMedicine alarmShareUserMedicine = AlarmShareUserMedicine.builder()
+					.alarmShare(alarmShare)
+					.medicine(medicineRepository.findMedicineByMediName(asumMediName))
+					.asumName(asumMediName)
+					.build();
 			AlarmShareUserMedicineRepository.save(alarmShareUserMedicine);
 		}
 
