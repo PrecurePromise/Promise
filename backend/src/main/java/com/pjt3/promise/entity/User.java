@@ -75,7 +75,7 @@ public class User {
 
     @JsonManagedReference
     @OneToMany(mappedBy="user")
-    List<TakeHistory> takeHistorie = new ArrayList<TakeHistory>();
+    List<TakeHistory> takeHistory = new ArrayList<TakeHistory>();
 
     @JsonManagedReference
     @OneToMany(mappedBy="user")

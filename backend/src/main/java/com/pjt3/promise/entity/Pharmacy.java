@@ -1,14 +1,16 @@
 package com.pjt3.promise.entity;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
 @Table(name="Pharmacy")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Pharmacy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

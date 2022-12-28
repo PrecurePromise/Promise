@@ -52,16 +52,17 @@ public class AlarmShareServiceImpl implements AlarmShareService {
 		try {
 
 			AlarmShare alarmShare = alarmShareRepository.findByAsId(alarmShareAcceptReq.getAsId());
-			
-			MediAlarm mediAlarm = new MediAlarm();
-			mediAlarm.setUser(user);
-			mediAlarm.setAlarmTitle(alarmShare.getAlarmTitle());
-			mediAlarm.setAlarmYN(alarmShare.getAlarmYN());
-			mediAlarm.setAlarmTime1(alarmShare.getAlarmTime1());
-			mediAlarm.setAlarmTime2(alarmShare.getAlarmTime2());
-			mediAlarm.setAlarmTime3(alarmShare.getAlarmTime3());
-			mediAlarm.setAlarmDayStart(alarmShare.getAlarmDayStart());
-			mediAlarm.setAlarmDayEnd(alarmShare.getAlarmDayEnd());
+
+			MediAlarm mediAlarm = MediAlarm.builder()
+					.user(user)
+					.alarmTitle(alarmShare.getAlarmTitle())
+					.alarmYN(alarmShare.getAlarmYN())
+					.alarmTime1(alarmShare.getAlarmTime1())
+					.alarmTime2(alarmShare.getAlarmTime2())
+					.alarmTime3(alarmShare.getAlarmTime3())
+					.alarmDayStart(alarmShare.getAlarmDayStart())
+					.alarmDayEnd(alarmShare.getAlarmDayEnd())
+					.build();
 			
 			mediAlarmRepository.save(mediAlarm);
 			
@@ -69,10 +70,10 @@ public class AlarmShareServiceImpl implements AlarmShareService {
 			
 			for (AlarmShareUserMedicine alarmShareUserMedicine : alarmShareUserMedicineList) {
 
-				UserMedicine userMedicine = new UserMedicine();
-				userMedicine.setMediAlarm(mediAlarm);
-				userMedicine.setUmName(alarmShareUserMedicine.getAsumName());
-				userMedicine.setMedicine(alarmShareUserMedicine.getMedicine());
+				UserMedicine userMedicine = UserMedicine.builder()
+						.mediAlarm(mediAlarm)
+						.medicine(alarmShareUserMedicine.getMedicine())
+						.umName(alarmShareUserMedicine.getAsumName()).build();
 
 				userMedicineRepository.save(userMedicine);
 			}

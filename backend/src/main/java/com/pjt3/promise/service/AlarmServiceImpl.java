@@ -102,10 +102,13 @@ public class AlarmServiceImpl implements AlarmService {
 			for (String prevTagName : alarmPostReq.getTagList()) {
 				String tagName = prevTagName.replaceAll("\\s", "");
 				if(tagName.equals("")) continue;
-				Tag tag = new Tag();
-				tag.setMediAlarm(mediAlarm);
-				tag.setUser(user);
-				tag.setTagName(tagName);
+
+				Tag tag = Tag.builder()
+						.mediAlarm(mediAlarm)
+						.user(user)
+						.tagName(tagName)
+						.build();
+
 				tagRepository.save(tag);
 			}
 
@@ -116,16 +119,17 @@ public class AlarmServiceImpl implements AlarmService {
 				User sharedUser = userRepository.findUserByUserEmail(sharedEmail);
 
 				// 공유 알람 저장
-				AlarmShare alarmShare = new AlarmShare();
-				alarmShare.setUser(sharedUser);
-				alarmShare.setSendUser(user);
-				alarmShare.setAlarmTitle(alarmPostReq.getAlarmTitle());
-				alarmShare.setAlarmYN(1);
-				alarmShare.setAlarmTime1(alarmPostReq.getAlarmTime1());
-				alarmShare.setAlarmTime2(alarmPostReq.getAlarmTime2());
-				alarmShare.setAlarmTime3(alarmPostReq.getAlarmTime3());
-				alarmShare.setAlarmDayStart(alarmPostReq.getAlarmDayStart());
-				alarmShare.setAlarmDayEnd(alarmPostReq.getAlarmDayEnd());
+				AlarmShare alarmShare = AlarmShare.builder()
+						.user(sharedUser)
+						.sendUser(user)
+						.alarmTitle(alarmPostReq.getAlarmTitle())
+						.alarmYN(1)
+						.alarmTime1(alarmPostReq.getAlarmTime1())
+						.alarmTime2(alarmPostReq.getAlarmTime2())
+						.alarmTime3(alarmPostReq.getAlarmTime3())
+						.alarmDayStart(alarmPostReq.getAlarmDayStart())
+						.alarmDayEnd(alarmPostReq.getAlarmDayEnd())
+						.build();
 
 				alarmShareRepository.save(alarmShare);
 				
@@ -142,18 +146,19 @@ public class AlarmServiceImpl implements AlarmService {
 
 	public MediAlarm mediAlarmSetting(User user, AlarmPostReq alarmPostReq) {
 
-		MediAlarm mediAlarm = new MediAlarm();
+		MediAlarm mediAlarm = MediAlarm.builder()
+			.user(user)
+			.alarmTitle(alarmPostReq.getAlarmTitle())
+			.build();
 
-		mediAlarm.setUser(user);
-		mediAlarm.setAlarmTitle(alarmPostReq.getAlarmTitle());
 		try {
-			mediAlarm.setAlarmDayStart(alarmPostReq.getAlarmDayStart());
-			mediAlarm.setAlarmDayEnd(alarmPostReq.getAlarmDayEnd());
-			mediAlarm.setAlarmYN(alarmPostReq.getAlarmYN());
+			mediAlarm.initAlarmDayStart(alarmPostReq.getAlarmDayStart());
+			mediAlarm.initAlarmDayEnd(alarmPostReq.getAlarmDayEnd());
+			mediAlarm.initAlarmYN(alarmPostReq.getAlarmYN());
 			if (alarmPostReq.getAlarmYN() == 1) {
-				mediAlarm.setAlarmTime1(alarmPostReq.getAlarmTime1());
-				mediAlarm.setAlarmTime2(alarmPostReq.getAlarmTime2());
-				mediAlarm.setAlarmTime3(alarmPostReq.getAlarmTime3());
+				mediAlarm.initAlarmTime1(alarmPostReq.getAlarmTime1());
+				mediAlarm.initAlarmTime2(alarmPostReq.getAlarmTime2());
+				mediAlarm.initAlarmTime3(alarmPostReq.getAlarmTime3());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -163,25 +168,25 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 	public void alarmShareUserMedicineSetting(AlarmShare alarmShare, List<String> alarmMediList) {
-		for (String mediName : alarmMediList) {
+		for (String asumMediName : alarmMediList) {
 
-			AlarmShareUserMedicine alarmShareUserMedicine = new AlarmShareUserMedicine();
-			alarmShareUserMedicine.setAlarmShare(alarmShare);
-			alarmShareUserMedicine.setAsumName(mediName);
-			alarmShareUserMedicine.setMedicine(medicineRepository.findMedicineByMediName(mediName));
-
+			AlarmShareUserMedicine alarmShareUserMedicine = AlarmShareUserMedicine.builder()
+					.alarmShare(alarmShare)
+					.medicine(medicineRepository.findMedicineByMediName(asumMediName))
+					.asumName(asumMediName)
+					.build();
 			AlarmShareUserMedicineRepository.save(alarmShareUserMedicine);
 		}
 
 	}
 	
 	public void userMedicineSetting(MediAlarm mediAlarm, List<String> alarmMediList) {
-		for (String mediName : alarmMediList) {
+		for (String userMediName : alarmMediList) {
 
-			UserMedicine userMedicine = new UserMedicine();
-			userMedicine.setMediAlarm(mediAlarm);
-			userMedicine.setUmName(mediName);
-			userMedicine.setMedicine(medicineRepository.findMedicineByMediName(mediName));
+			UserMedicine userMedicine = UserMedicine.builder()
+					.mediAlarm(mediAlarm)
+					.medicine(medicineRepository.findMedicineByMediName(userMediName))
+					.umName(userMediName).build();
 
 			userMedicineRepository.save(userMedicine);
 		}
@@ -199,15 +204,15 @@ public class AlarmServiceImpl implements AlarmService {
 			tagRepository.deleteByMediAlarmAlarmId(alarmPutReq.getAlarmId());
 			userMedicineRepository.deleteByMediAlarmAlarmId(alarmPutReq.getAlarmId());
 
-			mediAlarm.setUser(user);
-			mediAlarm.setAlarmTitle(alarmPutReq.getAlarmTitle());
-			mediAlarm.setAlarmDayStart(alarmPutReq.getAlarmDayStart());
-			mediAlarm.setAlarmDayEnd(alarmPutReq.getAlarmDayEnd());
-			mediAlarm.setAlarmYN(alarmPutReq.getAlarmYN());
+			mediAlarm.initUser(user);
+			mediAlarm.initAlarmTitle(alarmPutReq.getAlarmTitle());
+			mediAlarm.initAlarmDayStart(alarmPutReq.getAlarmDayStart());
+			mediAlarm.initAlarmDayEnd(alarmPutReq.getAlarmDayEnd());
+			mediAlarm.initAlarmYN(alarmPutReq.getAlarmYN());
 			if (alarmPutReq.getAlarmYN() == 1) {
-				mediAlarm.setAlarmTime1(alarmPutReq.getAlarmTime1());
-				mediAlarm.setAlarmTime2(alarmPutReq.getAlarmTime2());
-				mediAlarm.setAlarmTime3(alarmPutReq.getAlarmTime3());
+				mediAlarm.initAlarmTime1(alarmPutReq.getAlarmTime1());
+				mediAlarm.initAlarmTime2(alarmPutReq.getAlarmTime2());
+				mediAlarm.initAlarmTime3(alarmPutReq.getAlarmTime3());
 			}
 			mediAlarmRepository.save(mediAlarm);
 
@@ -216,10 +221,13 @@ public class AlarmServiceImpl implements AlarmService {
 			for (String prevTagName : alarmPutReq.getTagList()) {
 				String tagName = prevTagName.replaceAll("\\s", "");
 				if(tagName.equals("")) continue;
-				Tag tag = new Tag();
-				tag.setMediAlarm(mediAlarm);
-				tag.setUser(user);
-				tag.setTagName(tagName);
+
+				Tag tag = Tag.builder()
+						.mediAlarm(mediAlarm)
+						.user(user)
+						.tagName(tagName)
+						.build();
+
 				tagRepository.save(tag);
 			}
 
@@ -252,12 +260,14 @@ public class AlarmServiceImpl implements AlarmService {
 	@Override
 	public int insertTakeHistory(User user, TakeHistoryPostReq takeHistoryPostReq) {
 		try {
-			TakeHistory takeHistory = new TakeHistory();
-			takeHistory.setUser(user);
-			takeHistory.setMediAlarm(mediAlarmRepository.findMediAlarmByAlarmId(takeHistoryPostReq.getAlarmId()));
-			takeHistory.setThYN(takeHistoryPostReq.getThYN());
+			TakeHistory takeHistory = TakeHistory.builder()
+					.user(user)
+					.mediAlarm(mediAlarmRepository.findMediAlarmByAlarmId(takeHistoryPostReq.getAlarmId()))
+					.thYN(takeHistoryPostReq.getThYN())
+					.build();
 			if (takeHistoryPostReq.getThYN() == 1) {
-				takeHistory.setThTime(Timestamp.valueOf(LocalDateTime.now()));
+				takeHistory.initThTime(Timestamp.valueOf(LocalDateTime.now()));
+
 			}
 
 			takeHistoryRepository.save(takeHistory);

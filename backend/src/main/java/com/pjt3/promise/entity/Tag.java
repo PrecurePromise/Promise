@@ -1,15 +1,14 @@
 package com.pjt3.promise.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
 @Table(name="Tag")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +27,11 @@ public class Tag {
 
     @Column(name="tag_name")
     String tagName;
+
+    @Builder
+    public Tag(MediAlarm mediAlarm, User user, String tagName) {
+        this.mediAlarm = mediAlarm;
+        this.user = user;
+        this.tagName = tagName;
+    }
 }
