@@ -18,13 +18,12 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
-@Setter
 @Table(name="Medi_Alarm")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MediAlarm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,6 +55,43 @@ public class MediAlarm {
 
     @Column(name="alarm_day_end")
     String alarmDayEnd;
+
+    @Builder
+    public MediAlarm(User user, String alarmTitle, int alarmYN, String alarmTime1, String alarmTime2, String alarmTime3, String alarmDayStart, String alarmDayEnd) {
+        this.user = user;
+        this.alarmTitle = alarmTitle;
+        this.alarmYN = alarmYN;
+        this.alarmTime1 = alarmTime1;
+        this.alarmTime2 = alarmTime2;
+        this.alarmTime3 = alarmTime3;
+        this.alarmDayStart = alarmDayStart;
+        this.alarmDayEnd = alarmDayEnd;
+    }
+
+    public void initUser(User user) {
+        this.user = user;
+    }
+    public void initAlarmTitle(String alarmTitle) {
+        this.alarmTitle = alarmTitle;
+    }
+    public void initAlarmDayStart(String alarmDayStart) {
+        this.alarmDayStart = alarmDayStart;
+    }
+    public void initAlarmDayEnd(String alarmDayEnd) {
+        this.alarmDayEnd = alarmDayEnd;
+    }
+    public void initAlarmYN(int alarmYN) {
+        this.alarmYN = alarmYN;
+    }
+    public void initAlarmTime1(String alarmTime1) {
+        this.alarmTime1 = alarmTime1;
+    }
+    public void initAlarmTime2(String alarmTime2) {
+        this.alarmTime2 = alarmTime2;
+    }
+    public void initAlarmTime3(String alarmTime3) {
+        this.alarmTime3 = alarmTime3;
+    }
 
     @JsonManagedReference
     @OneToMany(mappedBy="mediAlarm")

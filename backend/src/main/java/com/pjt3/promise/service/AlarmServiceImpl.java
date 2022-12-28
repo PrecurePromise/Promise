@@ -142,18 +142,19 @@ public class AlarmServiceImpl implements AlarmService {
 
 	public MediAlarm mediAlarmSetting(User user, AlarmPostReq alarmPostReq) {
 
-		MediAlarm mediAlarm = new MediAlarm();
+		MediAlarm mediAlarm = MediAlarm.builder()
+			.user(user)
+			.alarmTitle(alarmPostReq.getAlarmTitle())
+			.build();
 
-		mediAlarm.setUser(user);
-		mediAlarm.setAlarmTitle(alarmPostReq.getAlarmTitle());
 		try {
-			mediAlarm.setAlarmDayStart(alarmPostReq.getAlarmDayStart());
-			mediAlarm.setAlarmDayEnd(alarmPostReq.getAlarmDayEnd());
-			mediAlarm.setAlarmYN(alarmPostReq.getAlarmYN());
+			mediAlarm.initAlarmDayStart(alarmPostReq.getAlarmDayStart());
+			mediAlarm.initAlarmDayEnd(alarmPostReq.getAlarmDayEnd());
+			mediAlarm.initAlarmYN(alarmPostReq.getAlarmYN());
 			if (alarmPostReq.getAlarmYN() == 1) {
-				mediAlarm.setAlarmTime1(alarmPostReq.getAlarmTime1());
-				mediAlarm.setAlarmTime2(alarmPostReq.getAlarmTime2());
-				mediAlarm.setAlarmTime3(alarmPostReq.getAlarmTime3());
+				mediAlarm.initAlarmTime1(alarmPostReq.getAlarmTime1());
+				mediAlarm.initAlarmTime2(alarmPostReq.getAlarmTime2());
+				mediAlarm.initAlarmTime3(alarmPostReq.getAlarmTime3());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -199,15 +200,15 @@ public class AlarmServiceImpl implements AlarmService {
 			tagRepository.deleteByMediAlarmAlarmId(alarmPutReq.getAlarmId());
 			userMedicineRepository.deleteByMediAlarmAlarmId(alarmPutReq.getAlarmId());
 
-			mediAlarm.setUser(user);
-			mediAlarm.setAlarmTitle(alarmPutReq.getAlarmTitle());
-			mediAlarm.setAlarmDayStart(alarmPutReq.getAlarmDayStart());
-			mediAlarm.setAlarmDayEnd(alarmPutReq.getAlarmDayEnd());
-			mediAlarm.setAlarmYN(alarmPutReq.getAlarmYN());
+			mediAlarm.initUser(user);
+			mediAlarm.initAlarmTitle(alarmPutReq.getAlarmTitle());
+			mediAlarm.initAlarmDayStart(alarmPutReq.getAlarmDayStart());
+			mediAlarm.initAlarmDayEnd(alarmPutReq.getAlarmDayEnd());
+			mediAlarm.initAlarmYN(alarmPutReq.getAlarmYN());
 			if (alarmPutReq.getAlarmYN() == 1) {
-				mediAlarm.setAlarmTime1(alarmPutReq.getAlarmTime1());
-				mediAlarm.setAlarmTime2(alarmPutReq.getAlarmTime2());
-				mediAlarm.setAlarmTime3(alarmPutReq.getAlarmTime3());
+				mediAlarm.initAlarmTime1(alarmPutReq.getAlarmTime1());
+				mediAlarm.initAlarmTime2(alarmPutReq.getAlarmTime2());
+				mediAlarm.initAlarmTime3(alarmPutReq.getAlarmTime3());
 			}
 			mediAlarmRepository.save(mediAlarm);
 
