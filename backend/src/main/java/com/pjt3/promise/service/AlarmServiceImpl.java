@@ -102,10 +102,13 @@ public class AlarmServiceImpl implements AlarmService {
 			for (String prevTagName : alarmPostReq.getTagList()) {
 				String tagName = prevTagName.replaceAll("\\s", "");
 				if(tagName.equals("")) continue;
-				Tag tag = new Tag();
-				tag.setMediAlarm(mediAlarm);
-				tag.setUser(user);
-				tag.setTagName(tagName);
+
+				Tag tag = Tag.builder()
+						.mediAlarm(mediAlarm)
+						.user(user)
+						.tagName(tagName)
+						.build();
+
 				tagRepository.save(tag);
 			}
 
@@ -218,10 +221,13 @@ public class AlarmServiceImpl implements AlarmService {
 			for (String prevTagName : alarmPutReq.getTagList()) {
 				String tagName = prevTagName.replaceAll("\\s", "");
 				if(tagName.equals("")) continue;
-				Tag tag = new Tag();
-				tag.setMediAlarm(mediAlarm);
-				tag.setUser(user);
-				tag.setTagName(tagName);
+
+				Tag tag = Tag.builder()
+						.mediAlarm(mediAlarm)
+						.user(user)
+						.tagName(tagName)
+						.build();
+
 				tagRepository.save(tag);
 			}
 
