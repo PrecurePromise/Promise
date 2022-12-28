@@ -1,7 +1,6 @@
 package com.pjt3.promise.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -15,8 +14,8 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @Table(name="Alarm_Share")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AlarmShare {
 	
     @Id
@@ -54,6 +53,19 @@ public class AlarmShare {
 
     @Column(name="alarm_day_end")
     String alarmDayEnd;
+
+    @Builder
+    public AlarmShare(User user, User sendUser, String alarmTitle, int alarmYN, String alarmTime1, String alarmTime2, String alarmTime3, String alarmDayStart, String alarmDayEnd) {
+        this.user = user;
+        this.sendUser = sendUser;
+        this.alarmTitle = alarmTitle;
+        this.alarmYN = alarmYN;
+        this.alarmTime1 = alarmTime1;
+        this.alarmTime2 = alarmTime2;
+        this.alarmTime3 = alarmTime3;
+        this.alarmDayStart = alarmDayStart;
+        this.alarmDayEnd = alarmDayEnd;
+    }
     
     @JsonManagedReference
     @OneToMany(mappedBy="alarmShare")

@@ -1,16 +1,15 @@
 package com.pjt3.promise.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Getter
-@Setter
 @Table(name="Take_History")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TakeHistory {
 
     @Id
@@ -33,4 +32,16 @@ public class TakeHistory {
 
     @Column(name="th_YN")
     int thYN;
+
+    @Builder
+    public TakeHistory(User user, MediAlarm mediAlarm, int thYN, Date thTime) {
+        this.user = user;
+        this.mediAlarm = mediAlarm;
+        this.thYN = thYN;
+        this.thTime = thTime;
+    }
+
+    public void initThTime(Date thTime) {
+        this.thTime = thTime;
+    }
 }
