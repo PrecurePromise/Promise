@@ -1,21 +1,20 @@
 package com.pjt3.promise.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
 @Table(name="User_Medicine")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserMedicine {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="um_id")
-    int unId;
+    int umId;
 
     @JsonBackReference
     @ManyToOne
@@ -30,4 +29,10 @@ public class UserMedicine {
     @Column(name="um_name")
     String umName;
 
+    @Builder
+    public UserMedicine(MediAlarm mediAlarm, Medicine medicine, String umName) {
+        this.mediAlarm = mediAlarm;
+        this.medicine = medicine;
+        this.umName = umName;
+    }
 }

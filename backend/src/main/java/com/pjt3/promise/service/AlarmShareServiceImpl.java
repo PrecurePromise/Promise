@@ -70,10 +70,10 @@ public class AlarmShareServiceImpl implements AlarmShareService {
 			
 			for (AlarmShareUserMedicine alarmShareUserMedicine : alarmShareUserMedicineList) {
 
-				UserMedicine userMedicine = new UserMedicine();
-				userMedicine.setMediAlarm(mediAlarm);
-				userMedicine.setUmName(alarmShareUserMedicine.getAsumName());
-				userMedicine.setMedicine(alarmShareUserMedicine.getMedicine());
+				UserMedicine userMedicine = UserMedicine.builder()
+						.mediAlarm(mediAlarm)
+						.medicine(alarmShareUserMedicine.getMedicine())
+						.umName(alarmShareUserMedicine.getAsumName()).build();
 
 				userMedicineRepository.save(userMedicine);
 			}

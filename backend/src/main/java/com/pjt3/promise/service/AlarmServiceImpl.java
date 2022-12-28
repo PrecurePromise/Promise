@@ -177,12 +177,12 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 	
 	public void userMedicineSetting(MediAlarm mediAlarm, List<String> alarmMediList) {
-		for (String mediName : alarmMediList) {
+		for (String userMediName : alarmMediList) {
 
-			UserMedicine userMedicine = new UserMedicine();
-			userMedicine.setMediAlarm(mediAlarm);
-			userMedicine.setUmName(mediName);
-			userMedicine.setMedicine(medicineRepository.findMedicineByMediName(mediName));
+			UserMedicine userMedicine = UserMedicine.builder()
+					.mediAlarm(mediAlarm)
+					.medicine(medicineRepository.findMedicineByMediName(userMediName))
+					.umName(userMediName).build();
 
 			userMedicineRepository.save(userMedicine);
 		}
