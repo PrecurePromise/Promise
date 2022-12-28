@@ -11,13 +11,12 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
-@Setter
 @Table(name="Alarm_Share_User_Medicine")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AlarmShareUserMedicine {
 	
 	@Id
@@ -37,5 +36,12 @@ public class AlarmShareUserMedicine {
 
     @Column(name="asum_name")
     String asumName;
+
+    @Builder
+    public AlarmShareUserMedicine(AlarmShare alarmShare, Medicine medicine, String asumName) {
+        this.alarmShare = alarmShare;
+        this.medicine = medicine;
+        this.asumName = asumName;
+    }
 
 }
