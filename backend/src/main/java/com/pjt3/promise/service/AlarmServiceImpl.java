@@ -116,16 +116,17 @@ public class AlarmServiceImpl implements AlarmService {
 				User sharedUser = userRepository.findUserByUserEmail(sharedEmail);
 
 				// 공유 알람 저장
-				AlarmShare alarmShare = new AlarmShare();
-				alarmShare.setUser(sharedUser);
-				alarmShare.setSendUser(user);
-				alarmShare.setAlarmTitle(alarmPostReq.getAlarmTitle());
-				alarmShare.setAlarmYN(1);
-				alarmShare.setAlarmTime1(alarmPostReq.getAlarmTime1());
-				alarmShare.setAlarmTime2(alarmPostReq.getAlarmTime2());
-				alarmShare.setAlarmTime3(alarmPostReq.getAlarmTime3());
-				alarmShare.setAlarmDayStart(alarmPostReq.getAlarmDayStart());
-				alarmShare.setAlarmDayEnd(alarmPostReq.getAlarmDayEnd());
+				AlarmShare alarmShare = AlarmShare.builder()
+						.user(sharedUser)
+						.sendUser(user)
+						.alarmTitle(alarmPostReq.getAlarmTitle())
+						.alarmYN(1)
+						.alarmTime1(alarmPostReq.getAlarmTime1())
+						.alarmTime2(alarmPostReq.getAlarmTime2())
+						.alarmTime3(alarmPostReq.getAlarmTime3())
+						.alarmDayStart(alarmPostReq.getAlarmDayStart())
+						.alarmDayEnd(alarmPostReq.getAlarmDayEnd())
+						.build();
 
 				alarmShareRepository.save(alarmShare);
 				
