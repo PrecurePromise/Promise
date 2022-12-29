@@ -1,12 +1,10 @@
 package com.pjt3.promise.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,15 +37,14 @@ import com.pjt3.promise.service.UserService;
 @RequestMapping("/users")
 @RestController
 public class UserController {
-	
-	@Autowired
-	UserService userService;
-	
-	@Autowired
-	PetService petService;
-	
-	@Autowired
-	PasswordEncoder passwordEncoder;
+
+	private final UserService userService;
+	private final PetService petService;
+
+	public UserController(UserService userService, PetService petService) {
+		this.userService = userService;
+		this.petService = petService;
+	}
 	
 	// 회원가입
 	@PostMapping()
