@@ -1,7 +1,6 @@
 package com.pjt3.promise.common.auth;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,17 +13,17 @@ import com.pjt3.promise.service.UserService;
 
 @Service
 public class PMUserDetailsService implements UserDetailsService {
-	
-	@Autowired
-	UserService userService;
+
+	private final UserService userService;
+
+	public PMUserDetailsService(UserService userService) {
+		this.userService = userService;
+	}
 
 	@Override
 	public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
 		User user = userService.getUserByUserEmail(userEmail);
-		if(user != null) {
-			PMUserDetails pmDetails = new PMUserDetails(user);
-			return pmDetails;
-		}
+		if(user != null) return new PMUserDetails(user);
 		
 		return null;
 	}

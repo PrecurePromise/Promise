@@ -21,17 +21,18 @@ import com.pjt3.promise.response.UserInfoGetRes;
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
-	@Autowired
-	UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
+	private final UserRepository userRepository;
+	private final PetRepository petRepository;
+	private final UserRepositorySupport userRepositorySupport;
 
-	@Autowired
-	PetRepository petRepository;
-
-	@Autowired
-	PasswordEncoder passwordEncoder;
-
-	@Autowired
-	UserRepositorySupport userRepositorySupport;
+	public UserServiceImpl(UserRepository userRepository, UserRepositorySupport userRepositorySupport,
+						   PetRepository petRepository, PasswordEncoder passwordEncoder) {
+		this.userRepository = userRepository;
+		this.userRepositorySupport = userRepositorySupport;
+		this.petRepository = petRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
 
 	@Override
 	public User insertUser(UserInsertPostReq userInsertInfo) {
