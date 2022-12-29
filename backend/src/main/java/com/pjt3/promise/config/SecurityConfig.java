@@ -1,8 +1,10 @@
 package com.pjt3.promise.config;
 
+import com.pjt3.promise.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -23,11 +25,14 @@ import com.pjt3.promise.service.UserService;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    PMUserDetailsService pmUserDetailsService;
+    private final PMUserDetailsService pmUserDetailsService;
+    private final UserService userService;
 
-    @Autowired
-    private UserService userService;
+    @Lazy
+    public SecurityConfig(PMUserDetailsService pmUserDetailsService, UserService userService) {
+        this.pmUserDetailsService = pmUserDetailsService;
+        this.userService = userService;
+    }
 
     // Password 인코딩 방식으로 BCrypt 암호화 방식 사용
     @Bean
