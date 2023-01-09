@@ -1,10 +1,9 @@
 package com.pjt3.promise.config;
 
-import com.pjt3.promise.service.UserServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.pjt3.promise.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -17,22 +16,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.pjt3.promise.common.auth.JwtAuthenticationFilter;
 import com.pjt3.promise.common.auth.PMUserDetailsService;
-import com.pjt3.promise.service.UserService;
 
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PMUserDetailsService pmUserDetailsService;
-    private final UserService userService;
-
-    @Lazy
-    public SecurityConfig(PMUserDetailsService pmUserDetailsService, UserService userService) {
-        this.pmUserDetailsService = pmUserDetailsService;
-        this.userService = userService;
-    }
+    private final UserRepository userRepository;
 
     // Password 인코딩 방식으로 BCrypt 암호화 방식 사용
     @Bean
@@ -64,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 사용 하지않음
                 .and()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(), userService)) //HTTP 요청에 JWT 토큰 인증 필터를 거치도록 필터를 추가
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(), userRepository)) //HTTP 요청에 JWT 토큰 인증 필터를 거치도록 필터를 추가
                 .authorizeRequests()
                 .antMatchers("api/**").authenticated()//인증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
                 .anyRequest().permitAll()
