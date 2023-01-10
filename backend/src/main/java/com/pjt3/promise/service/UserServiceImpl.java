@@ -2,8 +2,8 @@ package com.pjt3.promise.service;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,19 +19,13 @@ import com.pjt3.promise.response.ShareUserGetRes;
 import com.pjt3.promise.response.UserInfoGetRes;
 
 @Service("userService")
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-	@Autowired
-	UserRepository userRepository;
-
-	@Autowired
-	PetRepository petRepository;
-
-	@Autowired
-	PasswordEncoder passwordEncoder;
-
-	@Autowired
-	UserRepositorySupport userRepositorySupport;
+	private final PasswordEncoder passwordEncoder;
+	private final UserRepository userRepository;
+	private final PetRepository petRepository;
+	private final UserRepositorySupport userRepositorySupport;
 
 	@Override
 	public User insertUser(UserInsertPostReq userInsertInfo) {

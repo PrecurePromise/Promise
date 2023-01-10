@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.pjt3.promise.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,12 +23,12 @@ import com.pjt3.promise.service.UserService;
 
 // 요청헤더에 jwt 토큰이 있는 경우, 토큰 검증 및 인증 처리 로직 정의
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
+
+	private final UserRepository userRepository;
 	
-	private UserService userService;
-	
-	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, UserService userService) {
+	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {
 		super(authenticationManager);
-		this.userService = userService;
+		this.userRepository = userRepository;
 	}
 	
 	@Override
@@ -75,7 +76,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 			
 			// JWT 토큰에서 얻은 유저이메일로 DB에서 그 유저가 있는지 확인
 			if(userEmail != null) {
-				User user = userService.getUserByUserEmail(userEmail);
+				User user = userRepository.findUserByUserEmail(userEmail);
 				if(user != null) {
 					// 식별된 정상 유저인 경우, 요청 context 내에서 참조가능한 인증정보(jwtAuthentication) 생성
 					PMUserDetails pmUserDetails = new PMUserDetails(user);
