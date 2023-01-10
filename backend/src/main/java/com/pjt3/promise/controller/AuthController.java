@@ -36,12 +36,6 @@ public class AuthController {
 	@Autowired
 	AuthService authService;
 	
-	@Autowired
-	PasswordEncoder passwordEncoder;
-	
-	@Autowired
-	UserRepository userRepository;
-	
 	@PostMapping("/login")
 	public ResponseEntity<UserLoginPostRes> login(@RequestBody UserLoginPostReq loginInfo){
 		UserLoginPostRes userLoginPostRes = authService.login(loginInfo);
