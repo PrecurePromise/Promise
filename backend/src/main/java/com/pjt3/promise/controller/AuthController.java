@@ -31,9 +31,6 @@ import com.pjt3.promise.service.UserService;
 public class AuthController {
 	
 	@Autowired
-	UserService userService;
-	
-	@Autowired
 	AuthService authService;
 	
 	@PostMapping("/login")
