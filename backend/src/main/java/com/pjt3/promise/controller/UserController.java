@@ -2,6 +2,7 @@ package com.pjt3.promise.controller;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -36,16 +37,12 @@ import com.pjt3.promise.service.UserService;
 )
 @RequestMapping("/users")
 @RestController
+@RequiredArgsConstructor
 public class UserController {
 
 	private final UserService userService;
 	private final PetService petService;
 
-	public UserController(UserService userService, PetService petService) {
-		this.userService = userService;
-		this.petService = petService;
-	}
-	
 	// 회원가입
 	@PostMapping()
 	public ResponseEntity<BaseResponseBody> insertUser(@RequestBody UserInsertPostReq insertInfo){

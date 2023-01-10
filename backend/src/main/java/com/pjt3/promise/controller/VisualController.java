@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -26,9 +27,10 @@ import com.pjt3.promise.service.VisualService;
         methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS })
 @RequestMapping("/visual")
 @RestController
+@RequiredArgsConstructor
 public class VisualController {
-	 @Autowired
-	 VisualService visualService;
+	 
+	 private final VisualService visualService;
 
 	 @GetMapping()
 	 public ResponseEntity<?> getUsersTagInfo(Authentication authentication){

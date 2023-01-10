@@ -7,6 +7,7 @@ import com.pjt3.promise.response.MediDetailGetRes;
 import com.pjt3.promise.response.MediGetRes;
 import com.pjt3.promise.response.MediSearchGetRes;
 import com.pjt3.promise.service.MedicineService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +24,10 @@ import java.util.Map;
         methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS })
 @RequestMapping("/medicines")
 @RestController
+@RequiredArgsConstructor
 public class MedicineController {
 
-    @Autowired
-    MedicineService medicineService;
+    private final MedicineService medicineService;
 
     @GetMapping("/alarm")
     public ResponseEntity<?> getMediAutoSearchList(Authentication authentication, @RequestParam String searchKeyword){

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -40,13 +41,11 @@ import com.pjt3.promise.service.PetService;
 				RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS })
 @RequestMapping("/alarms")
 @RestController
+@RequiredArgsConstructor
 public class AlarmController {
 
-	@Autowired
-	AlarmService alarmService;
-
-	@Autowired
-	PetService petService;
+	private final AlarmService alarmService;
+	private final PetService petService;
 
 	@PostMapping()
 	public ResponseEntity<?> insertAlarm(Authentication authentication, @RequestBody AlarmPostReq alarmPostReq) {

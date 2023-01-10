@@ -1,5 +1,6 @@
 package com.pjt3.promise.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,10 +29,10 @@ import com.pjt3.promise.service.UserService;
 )
 @RequestMapping("/auth")
 @RestController
+@RequiredArgsConstructor
 public class AuthController {
-	
-	@Autowired
-	AuthService authService;
+
+	private final AuthService authService;
 	
 	@PostMapping("/login")
 	public ResponseEntity<UserLoginPostRes> login(@RequestBody UserLoginPostReq loginInfo){

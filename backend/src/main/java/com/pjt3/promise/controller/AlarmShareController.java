@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -31,10 +32,10 @@ import com.pjt3.promise.service.AlarmShareService;
         methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS })
 @RequestMapping("/sharings")
 @RestController
+@RequiredArgsConstructor
 public class AlarmShareController {
-    
-    @Autowired
-    AlarmShareService alarmShareService;
+
+    private final AlarmShareService alarmShareService;
 
 	@GetMapping()
 	public ResponseEntity<?> getAlarmShareList(Authentication authentication){

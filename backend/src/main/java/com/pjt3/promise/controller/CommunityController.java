@@ -13,6 +13,7 @@ import com.pjt3.promise.response.CommunityListGetRes;
 import com.pjt3.promise.response.MyPillHistoryGetRes;
 import com.pjt3.promise.service.CommunityService;
 import com.pjt3.promise.service.PetService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,13 +26,11 @@ import org.springframework.web.bind.annotation.*;
         methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS })
 @RequestMapping("/communities")
 @RestController
+@RequiredArgsConstructor
 public class CommunityController {
-	
-    @Autowired
-    CommunityService communityService;
 
-    @Autowired
-    PetService petService;
+    private final CommunityService communityService;
+    private final PetService petService;
     
     @PostMapping()
     public ResponseEntity<?> insertCommunityPost(Authentication authentication, @RequestBody CommuPostInsertReq commuPostInsertReq){
