@@ -2,6 +2,7 @@ package com.pjt3.promise.controller;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,10 +26,10 @@ import com.pjt3.promise.service.PharmacyService;
 )
 @RequestMapping("/pharmacies")
 @RestController
+@RequiredArgsConstructor
 public class PharmacyController {
 	
-	@Autowired
-	PharmacyService pharmacyService;
+	private final PharmacyService pharmacyService;
 	
 	@GetMapping("")
 	public ResponseEntity<List<PharmacyGetRes>> getPharmacyListByLatLon(Authentication authentication, @RequestParam double lat, double lon, int week, String curTime){

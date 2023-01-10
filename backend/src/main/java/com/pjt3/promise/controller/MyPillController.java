@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -27,10 +28,10 @@ import com.pjt3.promise.service.MyPillService;
 				RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS })
 @RequestMapping("/mypills")
 @RestController
+@RequiredArgsConstructor
 public class MyPillController {
-    
-    @Autowired
-    MyPillService myPillService;
+
+    private final MyPillService myPillService;
     
 	@GetMapping()
 	public ResponseEntity<?> getMyPillList(Authentication authentication) {
