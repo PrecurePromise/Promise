@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import javax.transaction.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,7 @@ import com.pjt3.promise.response.AlarmMainListGetRes;
 import com.pjt3.promise.response.AlarmOCRRes;
 
 @Service
+@RequiredArgsConstructor
 public class AlarmServiceImpl implements AlarmService {
 
 	private static final int SUCCESS = 1;
@@ -53,35 +55,16 @@ public class AlarmServiceImpl implements AlarmService {
 
 	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-	@Autowired
-	MediAlarmRepository mediAlarmRepository;
-
-	@Autowired
-	MedicineRepository medicineRepository;
-
-	@Autowired
-	UserMedicineRepository userMedicineRepository;
-
-	@Autowired
-	TagRepository tagRepository;
-
-	@Autowired
-	UserRepository userRepository;
-
-	@Autowired
-	AlarmShareRepository alarmShareRepository;
-
-	@Autowired
-	MediAlarmRepositorySupport mediAlarmRepositorySupport;
-
-	@Autowired
-	TakeHistoryRepository takeHistoryRepository;
-
-	@Autowired
-	MedicineRepositorySupport medicineRepositorySupport;
-	
-	@Autowired
-	AlarmShareUserMedicineRepository AlarmShareUserMedicineRepository;
+	private final MediAlarmRepository mediAlarmRepository;
+	private final MedicineRepository medicineRepository;
+	private final UserMedicineRepository userMedicineRepository;
+	private final TagRepository tagRepository;
+	private final UserRepository userRepository;
+	private final AlarmShareRepository alarmShareRepository;
+	private final TakeHistoryRepository takeHistoryRepository;
+	private final AlarmShareUserMedicineRepository AlarmShareUserMedicineRepository;
+	private final MedicineRepositorySupport medicineRepositorySupport;
+	private final MediAlarmRepositorySupport mediAlarmRepositorySupport;
 
 	@Transactional
 	@Override

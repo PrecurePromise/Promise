@@ -1,5 +1,6 @@
 package com.pjt3.promise.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,16 +11,11 @@ import com.pjt3.promise.repository.UserRepository;
 import com.pjt3.promise.request.UserInsertPostReq;
 
 @Service
+@RequiredArgsConstructor
 public class PetServiceImpl implements PetService{
 
-	@Autowired
-	UserService userService;
-
-	@Autowired
-	PetRepository petRepository;
-
-	@Autowired
-	UserRepository userRepository;
+	private final UserService userService;
+	private final PetRepository petRepository;
 
 	@Override
 	public int increasePetExp(int petExp, User user) {
