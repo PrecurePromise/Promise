@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,10 +17,10 @@ import com.pjt3.promise.response.MyPillGetRes;
 import com.pjt3.promise.response.MyPillHistoryGetRes;
 
 @Service
+@RequiredArgsConstructor
 public class MyPillServiceImpl implements MyPillService {
-	
-	@Autowired
-	MediAlarmRepositorySupport mediAlarmRepositorySupport;
+
+	private final MediAlarmRepositorySupport mediAlarmRepositorySupport;
 
 	@Override
 	public List<MyPillGetRes> getMyPillList(User user) {

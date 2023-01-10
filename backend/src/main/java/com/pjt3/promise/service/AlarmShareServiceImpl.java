@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,25 +22,17 @@ import com.pjt3.promise.request.AlarmShareAcceptReq;
 import com.pjt3.promise.response.AlarmShareGetRes;
 
 @Service
+@RequiredArgsConstructor
 public class AlarmShareServiceImpl implements AlarmShareService {
 
 	private static final int SUCCESS = 1;
 	private static final int FAIL = -1;
 
-	@Autowired
-	AlarmShareRepository alarmShareRepository;
-
-	@Autowired
-	MediAlarmRepository mediAlarmRepository;
-	
-	@Autowired
-	UserMedicineRepository userMedicineRepository;
-
-	@Autowired
-	AlarmShareRepositorySupport alarmShareRepositorySupport;
-	
-	@Autowired
-	AlarmShareUserMedicineRepository alarmShareUserMedicineRepository;
+	private final AlarmShareRepository alarmShareRepository;
+	private final MediAlarmRepository mediAlarmRepository;
+	private final UserMedicineRepository userMedicineRepository;
+	private final AlarmShareUserMedicineRepository alarmShareUserMedicineRepository;
+	private final AlarmShareRepositorySupport alarmShareRepositorySupport;
 
 	@Override
 	public List<AlarmShareGetRes> getAlarmShareList(User user) {

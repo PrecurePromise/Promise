@@ -3,6 +3,7 @@ package com.pjt3.promise.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +14,10 @@ import com.pjt3.promise.repository.PharmacyRepositorySupport;
 import com.pjt3.promise.response.PharmacyGetRes;
 
 @Service
+@RequiredArgsConstructor
 public class PharmacyServiceImpl implements PharmacyService {
-	
-	@Autowired
-	PharmacyRepository pharmacyRepository;
-	
-	@Autowired
-	PharmacyRepositorySupport pharmacyRepositorySupport;
-	
+
+	private final PharmacyRepositorySupport pharmacyRepositorySupport;
 
 	@Override
 	public List<PharmacyGetRes> getPharmacyListByLatLong(double lat, double lon, int week, String curTime) {
