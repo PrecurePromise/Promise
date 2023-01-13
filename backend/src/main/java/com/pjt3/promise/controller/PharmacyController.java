@@ -18,12 +18,6 @@ import com.pjt3.promise.entity.User;
 import com.pjt3.promise.response.PharmacyGetRes;
 import com.pjt3.promise.service.PharmacyService;
 
-@CrossOrigin(
-        origins = {"http://localhost:3000", "https://k5a201.p.ssafy.io/"},
-        allowCredentials = "true", 
-        allowedHeaders = "*", 
-        methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT,RequestMethod.OPTIONS}
-)
 @RequestMapping("/pharmacies")
 @RestController
 @RequiredArgsConstructor
