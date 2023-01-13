@@ -21,12 +21,6 @@ import com.pjt3.promise.response.UserLoginPostRes;
 import com.pjt3.promise.service.AuthService;
 import com.pjt3.promise.service.UserService;
 
-//@CrossOrigin(
-//        origins = {"http://localhost:3000", "https://k5a201.p.ssafy.io/"},
-//        allowCredentials = "true",
-//        allowedHeaders = "*",
-//        methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT,RequestMethod.OPTIONS}
-//)
 @RequestMapping("/auth")
 @RestController
 @RequiredArgsConstructor

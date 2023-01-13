@@ -23,9 +23,6 @@ import com.pjt3.promise.response.MyPillGetRes;
 import com.pjt3.promise.response.MyPillHistoryGetRes;
 import com.pjt3.promise.service.MyPillService;
 
-//@CrossOrigin(origins = { "http://localhost:3000",
-//		"https://k5a201.p.ssafy.io/" }, allowCredentials = "true", allowedHeaders = "*", methods = { RequestMethod.GET,
-//				RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS })
 @RequestMapping("/mypills")
 @RestController
 @RequiredArgsConstructor
