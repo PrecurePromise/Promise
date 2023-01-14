@@ -25,11 +25,6 @@ import com.pjt3.promise.request.AlarmShareAcceptReq;
 import com.pjt3.promise.response.AlarmShareGetRes;
 import com.pjt3.promise.service.AlarmShareService;
 
-@CrossOrigin(
-        origins = { "http://localhost:3000", "https://k5a201.p.ssafy.io/" },
-        allowCredentials = "true",
-        allowedHeaders = "*",
-        methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS })
 @RequestMapping("/sharings")
 @RestController
 @RequiredArgsConstructor

@@ -36,9 +36,6 @@ import com.pjt3.promise.response.AlarmOCRRes;
 import com.pjt3.promise.service.AlarmService;
 import com.pjt3.promise.service.PetService;
 
-@CrossOrigin(origins = { "http://localhost:3000",
-		"https://k5a201.p.ssafy.io/" }, allowCredentials = "true", allowedHeaders = "*", methods = { RequestMethod.GET,
-				RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS })
 @RequestMapping("/alarms")
 @RestController
 @RequiredArgsConstructor
