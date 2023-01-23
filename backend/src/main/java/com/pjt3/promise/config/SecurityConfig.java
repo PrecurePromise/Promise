@@ -2,6 +2,7 @@ package com.pjt3.promise.config;
 
 import com.pjt3.promise.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -57,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source =new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
@@ -78,8 +79,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), userRepository)) //HTTP 요청에 JWT 토큰 인증 필터를 거치도록 필터를 추가
                 .authorizeRequests()
-                .antMatchers("api/**").authenticated()//인증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
-                .anyRequest().permitAll()
+                .antMatchers("/auth/**").permitAll() //인 증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
+                .antMatchers("/users").permitAll()
+                .antMatchers("/users/email/**").permitAll()
+                .antMatchers("/users/nickname/**").permitAll()
+                .anyRequest().authenticated()
                 .and().cors();
     }
 
