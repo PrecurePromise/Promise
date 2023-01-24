@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
 @RequiredArgsConstructor
-public class authenticationManagerDSL extends AbstractHttpConfigurer<authenticationManagerDSL, HttpSecurity> {
+public class AuthenticationManagerDSL extends AbstractHttpConfigurer<AuthenticationManagerDSL, HttpSecurity> {
 
     private final UserRepository userRepository;
 

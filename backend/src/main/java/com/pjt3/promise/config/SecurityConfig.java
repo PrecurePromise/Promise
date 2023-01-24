@@ -68,7 +68,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 사용 하지않음
                 .and()
-                .apply(new authenticationManagerDSL(userRepository))
+                .apply(new AuthenticationManagerDSL(userRepository))
                 .and()
                 .authorizeRequests()
                 .antMatchers("/auth/**").permitAll() //인 증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
