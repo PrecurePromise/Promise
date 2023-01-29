@@ -28,7 +28,7 @@ public class AuthServiceImpl implements AuthService {
 		
 		try {
 			// 회원 가입 되어 있는 유저
-			User user = userService.getUserByUserEmail(userEmail);
+			User user = userRepository.findUserByUserEmail(userEmail);
 			int userJoinType = user.getUserJoinType();
 			
 			String accessToken = JwtTokenUtil.getToken(userEmail);
@@ -70,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
 		int userLoginType = loginInfo.getUserLoginType();
 		
 		try {
-			User user = userService.getUserByUserEmail(userEmail);
+			User user = userRepository.findUserByUserEmail(userEmail);
 			int userJoinType = user.getUserJoinType();
 			
 			String accessToken = JwtTokenUtil.getToken(userEmail);
