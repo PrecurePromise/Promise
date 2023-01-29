@@ -2,6 +2,8 @@ package com.pjt3.promise.service;
 
 import java.util.List;
 
+import com.pjt3.promise.exception.CustomException;
+import com.pjt3.promise.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,16 +31,26 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User insertUser(UserInsertPostReq userInsertInfo) {
+		boolean existedUserByUserEmail = userRepository.existsByUserEmail(userInsertInfo.getUserEmail());
+		boolean existedUserByUserNickname = userRepository.existsByUserNickname(userInsertInfo.getUserNickname());
 
-		User user = User.builder()
-				.userEmail(userInsertInfo.getUserEmail())
-				.userPassword(passwordEncoder.encode(userInsertInfo.getUserPassword()))
-				.userNickname(userInsertInfo.getUserNickname())
-				.userProfileUrl(userInsertInfo.getUserProfileUrl())
-				.userJoinType(userInsertInfo.getUserJoinType())
-				.build();
+		if (existedUserByUserEmail && existedUserByUserNickname) {
+			throw new CustomException(ErrorCode.DUPLICATED_EMAIL_NICKNAME);
+		} else if (existedUserByUserNickname) {
+			throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
+		} else if (existedUserByUserEmail) {
+			throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
+		} else {
+			User user = User.builder()
+					.userEmail(userInsertInfo.getUserEmail())
+					.userPassword(passwordEncoder.encode(userInsertInfo.getUserPassword()))
+					.userNickname(userInsertInfo.getUserNickname())
+					.userProfileUrl(userInsertInfo.getUserProfileUrl())
+					.userJoinType(userInsertInfo.getUserJoinType())
+					.build();
 
-		return userRepository.save(user);
+			return userRepository.save(user);
+		}
 	}
 
 	@Override
