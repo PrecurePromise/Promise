@@ -91,7 +91,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getUserByUserNickname(String userNickname) {
 		User user = userRepository.findUserByUserNickname(userNickname);
-		return user;
+
+		if (user != null) {
+			throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
+		} else {
+			return user;
+		}
 	}
 
 	@Override

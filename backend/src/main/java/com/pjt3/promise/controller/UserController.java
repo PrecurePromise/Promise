@@ -65,13 +65,10 @@ public class UserController {
 	// 닉네임 중복 체크 (회원가입 시)
 	@GetMapping("/nickname/{userNickname}")
 	public ResponseEntity<BaseResponseBody> checkDuplicatedNickname(@PathVariable String userNickname){
-		User user = userService.getUserByUserNickname(userNickname);
-		if (user != null) {
-			return ResponseEntity.status(409).body(BaseResponseBody.of(409, "다른 회원이 사용중인 닉네임입니다."));
-		}
-		else {
-			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "사용할 수 있는 닉네임입니다."));	
-		}
+
+		userService.getUserByUserNickname(userNickname);
+
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "사용할 수 있는 닉네임입니다."));
 	}
 	
 	// 닉네임 중복 체크 (가입 후 회원정보 수정 시)
