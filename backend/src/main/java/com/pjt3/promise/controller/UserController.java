@@ -47,15 +47,10 @@ public class UserController {
 	// 내 정보 조회
 	@GetMapping()
 	public ResponseEntity<UserInfoGetRes> getUserInfo(Authentication authentication){
-		try {
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-			UserInfoGetRes userInfo = userService.getUserInfo(user);
-			
-			return ResponseEntity.status(200).body(userInfo);
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(new UserInfoGetRes(420, "만료된 토큰입니다."));
-		}
+
+		UserInfoGetRes userInfoGetRes = userService.getUserInfo(authentication);
+
+		return ResponseEntity.status(200).body(userInfoGetRes);
 	}
 	
 	// 이메일 중복 체크
