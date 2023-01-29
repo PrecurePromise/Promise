@@ -80,7 +80,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getUserByUserEmail(String userEmail) {
 		User user = userRepository.findUserByUserEmail(userEmail);
-		return user;
+
+		if (user != null) {
+			throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
+		} else {
+			return user;
+		}
 	}
 
 	@Override
