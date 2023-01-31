@@ -7,7 +7,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pjt3.promise.exception.CustomException;
+import com.pjt3.promise.exception.ErrorCode;
+import com.pjt3.promise.exception.ErrorResponse;
 import com.pjt3.promise.repository.UserRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -49,8 +55,19 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 			Authentication authentication = getAuthentication(request);
 			// jwt 토큰으로부터 획득한 인증 정보(authentication) 설정
 			SecurityContextHolder.getContext().setAuthentication(authentication);;
-		}
-		catch (Exception ex) {
+		} catch (TokenExpiredException ex) {
+			ErrorResponse errorResponse = ErrorResponse.builder()
+					.statusCode(ErrorCode.EXPIRED_AUTH_TOKEN.getStatusCode())
+					.message(ErrorCode.EXPIRED_AUTH_TOKEN.getMessage())
+					.code(ErrorCode.EXPIRED_AUTH_TOKEN.getCode())
+					.build();
+			
+			response.setStatus(ErrorCode.EXPIRED_AUTH_TOKEN.getStatusCode());
+			response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
+			response.getWriter().flush();
+
+			return;
+		} catch (Exception ex) {
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -68,7 +85,11 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 		if (token != null) {
 			// token을 parse, validate 수행
 			JWTVerifier verifier = JwtTokenUtil.getVerifier();
-			JwtTokenUtil.handleError(verifier, token);
+			try {
+				JwtTokenUtil.handleError(verifier, token);
+			} catch (TokenExpiredException ex) {
+				throw ex;
+			}
 			// token decoding
 			DecodedJWT decodedJWT = verifier.verify(token.replace(JwtTokenUtil.TOKEN_PREFIX, ""));
 			String userEmail = decodedJWT.getSubject();

@@ -9,6 +9,8 @@ import com.pjt3.promise.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
+    boolean existsByUserEmail(String userEmail);
+    boolean existsByUserNickname(String userNickname);
     User findUserByUserEmail(String userEmail);
     User findUserByUserNickname(String userNickname);
     User findUserByRefreshToken(String refreshToken);

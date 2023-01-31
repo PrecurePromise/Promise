@@ -2,8 +2,12 @@ package com.pjt3.promise.service;
 
 import java.util.List;
 
+import com.pjt3.promise.common.auth.PMUserDetails;
+import com.pjt3.promise.exception.CustomException;
+import com.pjt3.promise.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,29 +32,71 @@ public class UserServiceImpl implements UserService {
 	private final UserRepositorySupport userRepositorySupport;
 
 	@Override
-	public User insertUser(UserInsertPostReq userInsertInfo) {
+	public void insertUser(UserInsertPostReq userInsertInfo) {
+		boolean existedUserByUserEmail = userRepository.existsByUserEmail(userInsertInfo.getUserEmail());
+		boolean existedUserByUserNickname = userRepository.existsByUserNickname(userInsertInfo.getUserNickname());
 
-		User user = User.builder()
-				.userEmail(userInsertInfo.getUserEmail())
-				.userPassword(passwordEncoder.encode(userInsertInfo.getUserPassword()))
-				.userNickname(userInsertInfo.getUserNickname())
-				.userProfileUrl(userInsertInfo.getUserProfileUrl())
-				.userJoinType(userInsertInfo.getUserJoinType())
-				.build();
+		if (existedUserByUserEmail && existedUserByUserNickname) {
+			throw new CustomException(ErrorCode.DUPLICATED_EMAIL_NICKNAME);
+		} else if (existedUserByUserNickname) {
+			throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
+		} else if (existedUserByUserEmail) {
+			throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
+		} else {
+			User user = User.builder()
+					.userEmail(userInsertInfo.getUserEmail())
+					.userPassword(passwordEncoder.encode(userInsertInfo.getUserPassword()))
+					.userNickname(userInsertInfo.getUserNickname())
+					.userProfileUrl(userInsertInfo.getUserProfileUrl())
+					.userJoinType(userInsertInfo.getUserJoinType())
+					.build();
 
-		return userRepository.save(user);
+			userRepository.save(user);
+		}
+	}
+
+	@Override
+	public UserInfoGetRes getUserInfo(Authentication authentication) {
+		UserInfoGetRes userInfoGetRes = new UserInfoGetRes();
+
+		if (authentication != null) {
+			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+			User user = userDetails.getUser();
+			Pet pet = petRepository.findPetByUser(user);
+
+			userInfoGetRes.setStatusCode(200);
+			userInfoGetRes.setMessage("조회에 성공했습니다.");
+			userInfoGetRes.setPetName(pet.getPetName());
+			userInfoGetRes.setPetLevel(pet.getPetLevel());
+
+			BeanUtils.copyProperties(user, userInfoGetRes);
+
+			return userInfoGetRes;
+		} else {
+			throw new CustomException(ErrorCode.INVALID_AUTH_TOKEN);
+		}
 	}
 
 	@Override
 	public User getUserByUserEmail(String userEmail) {
 		User user = userRepository.findUserByUserEmail(userEmail);
-		return user;
+
+		if (user != null) {
+			throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
+		} else {
+			return user;
+		}
 	}
 
 	@Override
 	public User getUserByUserNickname(String userNickname) {
 		User user = userRepository.findUserByUserNickname(userNickname);
-		return user;
+
+		if (user != null) {
+			throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
+		} else {
+			return user;
+		}
 	}
 
 	@Override
@@ -100,21 +146,6 @@ public class UserServiceImpl implements UserService {
 			e.printStackTrace();
 			return 0;
 		}
-	}
-
-	@Override
-	public UserInfoGetRes getUserInfo(User user) {
-		UserInfoGetRes userInfo = new UserInfoGetRes();
-		Pet pet = petRepository.findPetByUser(user);
-
-		userInfo.setStatusCode(200);
-		userInfo.setMessage("조회에 성공했습니다.");
-		userInfo.setPetName(pet.getPetName());
-		userInfo.setPetLevel(pet.getPetLevel());
-
-		BeanUtils.copyProperties(user, userInfo);
-
-		return userInfo;
 	}
 
 	@Override

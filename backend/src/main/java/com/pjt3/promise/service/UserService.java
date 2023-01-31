@@ -8,13 +8,17 @@ import com.pjt3.promise.request.UserInsertPostReq;
 import com.pjt3.promise.request.UserProfilePostReq;
 import com.pjt3.promise.response.ShareUserGetRes;
 import com.pjt3.promise.response.UserInfoGetRes;
+import org.springframework.security.core.Authentication;
 
 public interface UserService {
-	User insertUser(UserInsertPostReq userInsertInfo);	
+	void insertUser(UserInsertPostReq userInsertInfo);
+	UserInfoGetRes getUserInfo(Authentication authentication);
+
 	User getUserByUserEmail(String userEmail);
 	User getUserByUserNickname(String userNickname);
+	User getUserByUserNicknameWithAuth(Authentication authentication, String userNickname);
 	User getUserByRefreshToken(String refreshToken);
-	UserInfoGetRes getUserInfo(User user);
+
 	int deleteUser(String userEmail);
 	int update(User user, UserInfoPutReq userUpdateInfo);
 	int updateProfile(User user, UserProfilePostReq userProfileInfo);

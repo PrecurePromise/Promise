@@ -73,7 +73,7 @@ public class SecurityConfig {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**").permitAll() //인 증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
+                .antMatchers("/auth/**").permitAll() // 인증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
                 .antMatchers("/users").permitAll()
                 .antMatchers("/users/email/**").permitAll()
                 .antMatchers("/users/nickname/**").permitAll()
