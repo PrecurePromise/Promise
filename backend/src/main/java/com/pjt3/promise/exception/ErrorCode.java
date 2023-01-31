@@ -17,7 +17,7 @@ public enum ErrorCode {
     CANNOT_UPDATE_PROFILE(404, "UE006", "프로필 사진 업데이트 중에 문제가 발생했습니다."),
 
     /* Auth Exception */
-    INVALID_AUTH_TOKEN(420, "AE001", "만료된 토큰입니다."),
+    EXPIRED_AUTH_TOKEN(420, "AE001", "만료된 토큰입니다."),
 
     ;
 
