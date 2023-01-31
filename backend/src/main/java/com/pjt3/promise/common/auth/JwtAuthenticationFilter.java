@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 			// authorization 수행
 			Authentication authentication = getAuthentication(request);
 			// jwt 토큰으로부터 획득한 인증 정보(authentication) 설정
-			SecurityContextHolder.getContext().setAuthentication(authentication);;
+			SecurityContextHolder.getContext().setAuthentication(authentication);
 		} catch (TokenExpiredException ex) {
 			ErrorResponse errorResponse = ErrorResponse.builder()
 					.statusCode(ErrorCode.EXPIRED_AUTH_TOKEN.getStatusCode())
@@ -104,7 +104,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 					UsernamePasswordAuthenticationToken jwtAuthentication = new UsernamePasswordAuthenticationToken(userEmail, null, pmUserDetails.getAuthorities());
 					jwtAuthentication.setDetails(pmUserDetails);
 					return jwtAuthentication;
-				}		
+				}
 			}
 			return null;
 		}

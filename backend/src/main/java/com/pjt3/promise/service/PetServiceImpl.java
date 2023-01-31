@@ -14,7 +14,7 @@ import com.pjt3.promise.request.UserInsertPostReq;
 @RequiredArgsConstructor
 public class PetServiceImpl implements PetService{
 
-	private final UserService userService;
+	private final UserRepository userRepository;
 	private final PetRepository petRepository;
 
 	@Override
@@ -47,7 +47,7 @@ public class PetServiceImpl implements PetService{
 
 	@Override
 	public Pet insertPet(UserInsertPostReq userInsertInfo) {
-		User user = userService.getUserByUserEmail(userInsertInfo.getUserEmail());
+		User user = userRepository.findUserByUserEmail(userInsertInfo.getUserEmail());
 		Pet pet = Pet.builder()
 				.user(user)
 				.petName(userInsertInfo.getPetName())

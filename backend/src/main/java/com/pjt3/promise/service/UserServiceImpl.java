@@ -59,22 +59,18 @@ public class UserServiceImpl implements UserService {
 	public UserInfoGetRes getUserInfo(Authentication authentication) {
 		UserInfoGetRes userInfoGetRes = new UserInfoGetRes();
 
-		if (authentication != null) {
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-			Pet pet = petRepository.findPetByUser(user);
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+		Pet pet = petRepository.findPetByUser(user);
 
-			userInfoGetRes.setStatusCode(200);
-			userInfoGetRes.setMessage("조회에 성공했습니다.");
-			userInfoGetRes.setPetName(pet.getPetName());
-			userInfoGetRes.setPetLevel(pet.getPetLevel());
+		userInfoGetRes.setStatusCode(200);
+		userInfoGetRes.setMessage("조회에 성공했습니다.");
+		userInfoGetRes.setPetName(pet.getPetName());
+		userInfoGetRes.setPetLevel(pet.getPetLevel());
 
-			BeanUtils.copyProperties(user, userInfoGetRes);
+		BeanUtils.copyProperties(user, userInfoGetRes);
 
-			return userInfoGetRes;
-		} else {
-			throw new CustomException(ErrorCode.INVALID_AUTH_TOKEN);
-		}
+		return userInfoGetRes;
 	}
 
 	@Override
@@ -100,14 +96,41 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public void getUserByUserNicknameWithAuth(Authentication authentication, String userNickname) {
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+
+		User authUser = userDetails.getUser();
+		String authUserNickname = authUser.getUserNickname();
+
+		User checkUser = userRepository.findUserByUserNickname(userNickname);
+
+		if (authUserNickname.equals(userNickname)) {
+			throw new CustomException(ErrorCode.DUPLICATED_NICKNAME_OWN);
+		} else {
+			if (checkUser != null) {
+				throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
+			}
+		}
+	}
+
+	@Override
 	public User getUserByRefreshToken(String refreshToken) {
 		User user = userRepository.findUserByRefreshToken(refreshToken);
 		return user;
 	}
 
 	@Override
-	public int deleteUser(String userEmail) {
-		return userRepository.deleteUserByUserEmail(userEmail);
+	public void deleteUser(Authentication authentication) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		String userEmail = userDetails.getUsername();
+
+		int deleteRes = userRepository.deleteUserByUserEmail(userEmail);
+
+		if (deleteRes != 1) {
+			throw new CustomException(ErrorCode.CANNOT_DELETE_USER);
+		}
+
 	}
 
 	@Override

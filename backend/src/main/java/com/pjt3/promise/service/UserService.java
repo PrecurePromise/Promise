@@ -16,10 +16,10 @@ public interface UserService {
 
 	User getUserByUserEmail(String userEmail);
 	User getUserByUserNickname(String userNickname);
-	User getUserByUserNicknameWithAuth(Authentication authentication, String userNickname);
+	void getUserByUserNicknameWithAuth(Authentication authentication, String userNickname);
 	User getUserByRefreshToken(String refreshToken);
 
-	int deleteUser(String userEmail);
+	void deleteUser(Authentication authentication);
 	int update(User user, UserInfoPutReq userUpdateInfo);
 	int updateProfile(User user, UserProfilePostReq userProfileInfo);
 	List<ShareUserGetRes> getShareUserList(String searchKeyword, String userEmail, String userNickname);
