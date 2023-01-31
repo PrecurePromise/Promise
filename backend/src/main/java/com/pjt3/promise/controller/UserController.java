@@ -44,15 +44,6 @@ public class UserController {
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "환영합니다. 회원가입에 성공하셨습니다."));
 	}
 	
-	// 내 정보 조회
-	@GetMapping()
-	public ResponseEntity<UserInfoGetRes> getUserInfo(Authentication authentication){
-
-		UserInfoGetRes userInfoGetRes = userService.getUserInfo(authentication);
-
-		return ResponseEntity.status(200).body(userInfoGetRes);
-	}
-	
 	// 이메일 중복 체크
 	@GetMapping("/email/{userEmail}")
 	public ResponseEntity<BaseResponseBody> checkDuplicatedEmail(@PathVariable String userEmail){
@@ -70,28 +61,41 @@ public class UserController {
 
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "사용할 수 있는 닉네임입니다."));
 	}
+
+	// 내 정보 조회
+	@GetMapping("/me")
+	public ResponseEntity<UserInfoGetRes> getUserInfo(Authentication authentication){
+		UserInfoGetRes userInfoGetRes = userService.getUserInfo(authentication);
+
+		return ResponseEntity.status(200).body(userInfoGetRes);
+	}
 	
 	// 닉네임 중복 체크 (가입 후 회원정보 수정 시)
 	@GetMapping("/me/nickname/{userNickname}")
 	public ResponseEntity<BaseResponseBody> checkDuplicatedNicknameUpdate (Authentication authentication, @PathVariable String userNickname){
-		try {
-			User user = userService.getUserByUserNickname(userNickname);
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			String nickName = userDetails.getUser().getUserNickname();
-			if (user != null) {
-				if(!nickName.equals(userNickname)) {
-					return ResponseEntity.status(409).body(BaseResponseBody.of(409, "다른 회원이 사용중인 닉네임입니다."));	
-				}
-				else {				
-					return ResponseEntity.status(200).body(BaseResponseBody.of(200, "현재 회원님이 사용중인 닉네임입니다. (사용할 수 있는 닉네임입니다.)"));	
-				}
-			}
-			else {
-				return ResponseEntity.status(200).body(BaseResponseBody.of(200, "사용할 수 있는 닉네임입니다."));	
-			}
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		}
+		System.out.println("checkDuplicatedNicknameUpdate authentication : " + authentication);
+		userService.getUserByUserNicknameWithAuth(authentication, userNickname);
+
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "사용할 수 있는 닉네임입니다."));
+//		try {
+//			System.out.println("ㅙㅏㄴ돼");
+//			User user = userService.getUserByUserNickname(userNickname);
+//			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+//			String nickName = userDetails.getUser().getUserNickname();
+//			if (user != null) {
+//				if(!nickName.equals(userNickname)) {
+//					return ResponseEntity.status(409).body(BaseResponseBody.of(410, "다른 회원이 사용중인 닉네임입니다."));
+//				}
+//				else {
+//					return ResponseEntity.status(200).body(BaseResponseBody.of(200, "현재 회원님이 사용중인 닉네임입니다. (사용할 수 있는 닉네임입니다.)"));
+//				}
+//			}
+//			else {
+//				return ResponseEntity.status(200).body(BaseResponseBody.of(200, "사용할 수 있는 닉네임입니다."));
+//			}
+//		} catch (NullPointerException e) {
+//			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
+//		}
 	}
 	
 	// 회원 탈퇴
