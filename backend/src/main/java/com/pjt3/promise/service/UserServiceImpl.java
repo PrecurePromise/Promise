@@ -120,8 +120,17 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int deleteUser(String userEmail) {
-		return userRepository.deleteUserByUserEmail(userEmail);
+	public void deleteUser(Authentication authentication) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		String userEmail = userDetails.getUsername();
+
+		int deleteRes = userRepository.deleteUserByUserEmail(userEmail);
+
+		if (deleteRes != 1) {
+			throw new CustomException(ErrorCode.CANNOT_DELETE_USER);
+		}
+
 	}
 
 	@Override
