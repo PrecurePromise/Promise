@@ -13,9 +13,12 @@ import org.springframework.security.core.Authentication;
 public interface UserService {
 	void insertUser(UserInsertPostReq userInsertInfo);
 	UserInfoGetRes getUserInfo(Authentication authentication);
+
 	User getUserByUserEmail(String userEmail);
 	User getUserByUserNickname(String userNickname);
+	User getUserByUserNicknameWithAuth(Authentication authentication, String userNickname);
 	User getUserByRefreshToken(String refreshToken);
+
 	int deleteUser(String userEmail);
 	int update(User user, UserInfoPutReq userUpdateInfo);
 	int updateProfile(User user, UserProfilePostReq userProfileInfo);
