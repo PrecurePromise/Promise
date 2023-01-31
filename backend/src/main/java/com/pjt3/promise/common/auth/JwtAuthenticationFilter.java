@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 			// authorization 수행
 			Authentication authentication = getAuthentication(request);
 			// jwt 토큰으로부터 획득한 인증 정보(authentication) 설정
-			SecurityContextHolder.getContext().setAuthentication(authentication);;
+			SecurityContextHolder.getContext().setAuthentication(authentication);
 		} catch (TokenExpiredException ex) {
 			ErrorResponse errorResponse = ErrorResponse.builder()
 					.statusCode(ErrorCode.EXPIRED_AUTH_TOKEN.getStatusCode())
@@ -91,12 +91,16 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 				throw ex;
 			}
 			// token decoding
+			System.out.println("*** 토큰 디코딩 ***");
 			DecodedJWT decodedJWT = verifier.verify(token.replace(JwtTokenUtil.TOKEN_PREFIX, ""));
+			System.out.println("decodedJWT : " + decodedJWT);
 			String userEmail = decodedJWT.getSubject();
+			System.out.println("userEmail : " + userEmail);
 			
 			
 			// JWT 토큰에서 얻은 유저이메일로 DB에서 그 유저가 있는지 확인
 			if(userEmail != null) {
+				System.out.println("이메일은 있다 ");
 				User user = userRepository.findUserByUserEmail(userEmail);
 				if(user != null) {
 					// 식별된 정상 유저인 경우, 요청 context 내에서 참조가능한 인증정보(jwtAuthentication) 생성
@@ -104,7 +108,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 					UsernamePasswordAuthenticationToken jwtAuthentication = new UsernamePasswordAuthenticationToken(userEmail, null, pmUserDetails.getAuthorities());
 					jwtAuthentication.setDetails(pmUserDetails);
 					return jwtAuthentication;
-				}		
+				}
 			}
 			return null;
 		}
