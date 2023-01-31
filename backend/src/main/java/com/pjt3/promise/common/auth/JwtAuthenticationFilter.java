@@ -91,16 +91,12 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 				throw ex;
 			}
 			// token decoding
-			System.out.println("*** 토큰 디코딩 ***");
 			DecodedJWT decodedJWT = verifier.verify(token.replace(JwtTokenUtil.TOKEN_PREFIX, ""));
-			System.out.println("decodedJWT : " + decodedJWT);
 			String userEmail = decodedJWT.getSubject();
-			System.out.println("userEmail : " + userEmail);
 			
 			
 			// JWT 토큰에서 얻은 유저이메일로 DB에서 그 유저가 있는지 확인
 			if(userEmail != null) {
-				System.out.println("이메일은 있다 ");
 				User user = userRepository.findUserByUserEmail(userEmail);
 				if(user != null) {
 					// 식별된 정상 유저인 경우, 요청 context 내에서 참조가능한 인증정보(jwtAuthentication) 생성
