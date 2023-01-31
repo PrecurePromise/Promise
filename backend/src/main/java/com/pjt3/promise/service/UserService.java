@@ -16,7 +16,7 @@ public interface UserService {
 
 	User getUserByUserEmail(String userEmail);
 	User getUserByUserNickname(String userNickname);
-	User getUserByUserNicknameWithAuth(Authentication authentication, String userNickname);
+	void getUserByUserNicknameWithAuth(Authentication authentication, String userNickname);
 	User getUserByRefreshToken(String refreshToken);
 
 	int deleteUser(String userEmail);
