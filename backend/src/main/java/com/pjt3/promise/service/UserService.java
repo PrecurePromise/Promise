@@ -20,7 +20,7 @@ public interface UserService {
 	User getUserByRefreshToken(String refreshToken);
 
 	void deleteUser(Authentication authentication);
-	int update(User user, UserInfoPutReq userUpdateInfo);
+	void update(Authentication authentication, UserInfoPutReq userUpdateInfo);
 	int updateProfile(User user, UserProfilePostReq userProfileInfo);
 	List<ShareUserGetRes> getShareUserList(String searchKeyword, String userEmail, String userNickname);
 }

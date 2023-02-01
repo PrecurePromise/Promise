@@ -91,22 +91,11 @@ public class UserController {
 	// 회원 정보 수정
 	@PutMapping()
 	public ResponseEntity<BaseResponseBody> updateUserInfo (Authentication authentication, @RequestBody UserInfoPutReq userUpdateInfo){
-		try {
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-			
-			if (userService.update(user, userUpdateInfo) == 1) {
-				return ResponseEntity.status(200).body(BaseResponseBody.of(200, "내 정보가 수정되었습니다."));			
-			}
-			else if (userService.update(user, userUpdateInfo) == 2) {
-				return ResponseEntity.status(409).body(BaseResponseBody.of(409, "중복된 닉네임입니다."));
-			}
-			else {
-				return ResponseEntity.status(404).body(BaseResponseBody.of(404, "업데이트 과정에서 문제가 발생했습니다."));
-			}
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		}
+
+		userService.update(authentication, userUpdateInfo);
+
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "내 정보가 수정되었습니다."));
+
 	}
 	
 	// 내 프로필 사진 수정
