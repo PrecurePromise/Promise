@@ -21,6 +21,6 @@ public interface UserService {
 
 	void deleteUser(Authentication authentication);
 	void update(Authentication authentication, UserInfoPutReq userUpdateInfo);
-	int updateProfile(User user, UserProfilePostReq userProfileInfo);
+	void updateProfile(Authentication authentication, UserProfilePostReq userProfileInfo);
 	List<ShareUserGetRes> getShareUserList(String searchKeyword, String userEmail, String userNickname);
 }

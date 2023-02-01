@@ -101,19 +101,10 @@ public class UserController {
 	// 내 프로필 사진 수정
 	@PutMapping("/profile")
 	public ResponseEntity<BaseResponseBody> updateUserProfile (Authentication authentication, @RequestBody UserProfilePostReq userProfileInfo){
-		try {
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-			
-			if (userService.updateProfile(user, userProfileInfo) == 1) {
-				return ResponseEntity.status(200).body(BaseResponseBody.of(200, "프로필 사진이 수정되었습니다."));
-			}
-			else {
-				return ResponseEntity.status(400).body(BaseResponseBody.of(400, "프로필 사진 업데이트 과정에서 문제가 발생했습니다."));				
-			}
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		}
+
+		userService.updateProfile(authentication, userProfileInfo);
+
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "프로필 사진이 수정되었습니다."));
 	}
 	
 	// 사용자 찾기 (알람 입력 시 - 공유할 사용자 이메일 검색)

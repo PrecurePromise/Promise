@@ -152,16 +152,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int updateProfile(User user, UserProfilePostReq userProfileInfo) {
-		try {
-			String userProfileUrl = userProfileInfo.getUserProfileUrl();
-			user.updateUserProfileUrl(userProfileUrl);
-			userRepository.save(user);
-			return 1;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return 0;
-		}
+	public void updateProfile(Authentication authentication, UserProfilePostReq userProfileInfo) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+
+		String userProfileUrl = userProfileInfo.getUserProfileUrl();
+		user.updateUserProfileUrl(userProfileUrl);
+		userRepository.save(user);
 	}
 
 	@Override
