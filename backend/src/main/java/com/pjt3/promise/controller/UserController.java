@@ -110,24 +110,10 @@ public class UserController {
 	// 사용자 찾기 (알람 입력 시 - 공유할 사용자 이메일 검색)
 	@GetMapping("/sharing")
 	public ResponseEntity<List<ShareUserGetRes>> getShareUserList (Authentication authentication, @RequestParam String searchKeyword){
-		
-		try {
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-			String userEmail = user.getUserEmail();
-			String userNickname = user.getUserNickname();
-			
-			List<ShareUserGetRes> shareUserGetResList = userService.getShareUserList(searchKeyword, userEmail, userNickname);
-			
-			if (shareUserGetResList.size() == 0) {
-				return ResponseEntity.status(400).body(null);
-			}
-			
-			return ResponseEntity.status(200).body(shareUserGetResList);
-			
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(null);
-		}
+
+		List<ShareUserGetRes> shareUserGetResList = userService.getShareUserList(authentication, searchKeyword);
+
+		return ResponseEntity.status(200).body(shareUserGetResList);
 		
 	}
 }

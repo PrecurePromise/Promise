@@ -163,8 +163,18 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<ShareUserGetRes> getShareUserList(String searchKeyword, String userEmail, String userNickname) {
+	public List<ShareUserGetRes> getShareUserList(Authentication authentication, String searchKeyword) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+		String userEmail = user.getUserEmail();
+		String userNickname = user.getUserNickname();
+
 		List<ShareUserGetRes> shareUserList = userRepositorySupport.getShareUserList(searchKeyword);
+
+		if (shareUserList.size() == 0) {
+			throw new CustomException(ErrorCode.CANNOT_FOUND_USER);
+		}
 
 		for (ShareUserGetRes shareUserGetRes : shareUserList) {
 			if (shareUserGetRes.getUserEmail().equals(userEmail) && shareUserGetRes.getUserNickname().equals(userNickname)) {
