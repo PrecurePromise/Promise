@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pjt3.promise.common.auth.PMUserDetails;
 import com.pjt3.promise.common.response.BaseResponseBody;
-import com.pjt3.promise.entity.User;
 import com.pjt3.promise.request.UserInfoPutReq;
 import com.pjt3.promise.request.UserInsertPostReq;
 import com.pjt3.promise.request.UserProfilePostReq;
@@ -91,63 +89,29 @@ public class UserController {
 	// 회원 정보 수정
 	@PutMapping()
 	public ResponseEntity<BaseResponseBody> updateUserInfo (Authentication authentication, @RequestBody UserInfoPutReq userUpdateInfo){
-		try {
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-			
-			if (userService.update(user, userUpdateInfo) == 1) {
-				return ResponseEntity.status(200).body(BaseResponseBody.of(200, "내 정보가 수정되었습니다."));			
-			}
-			else if (userService.update(user, userUpdateInfo) == 2) {
-				return ResponseEntity.status(409).body(BaseResponseBody.of(409, "중복된 닉네임입니다."));
-			}
-			else {
-				return ResponseEntity.status(404).body(BaseResponseBody.of(404, "업데이트 과정에서 문제가 발생했습니다."));
-			}
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		}
+
+		userService.update(authentication, userUpdateInfo);
+
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "내 정보가 수정되었습니다."));
+
 	}
 	
 	// 내 프로필 사진 수정
 	@PutMapping("/profile")
 	public ResponseEntity<BaseResponseBody> updateUserProfile (Authentication authentication, @RequestBody UserProfilePostReq userProfileInfo){
-		try {
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-			
-			if (userService.updateProfile(user, userProfileInfo) == 1) {
-				return ResponseEntity.status(200).body(BaseResponseBody.of(200, "프로필 사진이 수정되었습니다."));
-			}
-			else {
-				return ResponseEntity.status(400).body(BaseResponseBody.of(400, "프로필 사진 업데이트 과정에서 문제가 발생했습니다."));				
-			}
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		}
+
+		userService.updateProfile(authentication, userProfileInfo);
+
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "프로필 사진이 수정되었습니다."));
 	}
 	
 	// 사용자 찾기 (알람 입력 시 - 공유할 사용자 이메일 검색)
 	@GetMapping("/sharing")
 	public ResponseEntity<List<ShareUserGetRes>> getShareUserList (Authentication authentication, @RequestParam String searchKeyword){
-		
-		try {
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-			String userEmail = user.getUserEmail();
-			String userNickname = user.getUserNickname();
-			
-			List<ShareUserGetRes> shareUserGetResList = userService.getShareUserList(searchKeyword, userEmail, userNickname);
-			
-			if (shareUserGetResList.size() == 0) {
-				return ResponseEntity.status(400).body(null);
-			}
-			
-			return ResponseEntity.status(200).body(shareUserGetResList);
-			
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(null);
-		}
+
+		List<ShareUserGetRes> shareUserGetResList = userService.getShareUserList(authentication, searchKeyword);
+
+		return ResponseEntity.status(200).body(shareUserGetResList);
 		
 	}
 }

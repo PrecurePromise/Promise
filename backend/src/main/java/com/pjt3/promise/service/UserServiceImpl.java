@@ -134,46 +134,46 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int update(User user, UserInfoPutReq userUpdateInfo) {
-		try {
-			String userNickname = userUpdateInfo.getUserNickname();
-			String petName = userUpdateInfo.getPetName();
-			Pet pet = petRepository.findPetByUser(user);
+	public void update(Authentication authentication, UserInfoPutReq userUpdateInfo) {
 
-			if(userRepository.findUserByUserNickname(userNickname) != null &&
-					!user.getUserNickname().equals(userNickname)){
-				return 2;
-			}
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
 
-			pet.givePetName(petName);
+		String userNickname = userUpdateInfo.getUserNickname();
+		String petName = userUpdateInfo.getPetName();
+		Pet pet = petRepository.findPetByUser(user);
 
-			userUpdateInfo.setUserNickname(userNickname);
-			BeanUtils.copyProperties(userUpdateInfo, user);
-			userRepository.save(user);
-			return 1;
+		getUserByUserNicknameWithAuth(authentication, userNickname);
 
-		} catch(Exception e) {
-			e.printStackTrace();
-			return 0;
-		}
+		pet.givePetName(petName);
+		user.updateNickname(userNickname);
+		userRepository.save(user);
 	}
 
 	@Override
-	public int updateProfile(User user, UserProfilePostReq userProfileInfo) {
-		try {
-			String userProfileUrl = userProfileInfo.getUserProfileUrl();
-			user.updateUserProfileUrl(userProfileUrl);
-			userRepository.save(user);
-			return 1;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return 0;
-		}
+	public void updateProfile(Authentication authentication, UserProfilePostReq userProfileInfo) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+
+		String userProfileUrl = userProfileInfo.getUserProfileUrl();
+		user.updateUserProfileUrl(userProfileUrl);
+		userRepository.save(user);
 	}
 
 	@Override
-	public List<ShareUserGetRes> getShareUserList(String searchKeyword, String userEmail, String userNickname) {
+	public List<ShareUserGetRes> getShareUserList(Authentication authentication, String searchKeyword) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+		String userEmail = user.getUserEmail();
+		String userNickname = user.getUserNickname();
+
 		List<ShareUserGetRes> shareUserList = userRepositorySupport.getShareUserList(searchKeyword);
+
+		if (shareUserList.size() == 0) {
+			throw new CustomException(ErrorCode.CANNOT_FOUND_USER);
+		}
 
 		for (ShareUserGetRes shareUserGetRes : shareUserList) {
 			if (shareUserGetRes.getUserEmail().equals(userEmail) && shareUserGetRes.getUserNickname().equals(userNickname)) {
