@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pjt3.promise.common.auth.PMUserDetails;
 import com.pjt3.promise.common.response.BaseResponseBody;
-import com.pjt3.promise.entity.User;
 import com.pjt3.promise.request.UserInfoPutReq;
 import com.pjt3.promise.request.UserInsertPostReq;
 import com.pjt3.promise.request.UserProfilePostReq;

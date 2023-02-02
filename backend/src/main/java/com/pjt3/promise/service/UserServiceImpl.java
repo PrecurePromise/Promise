@@ -147,7 +147,6 @@ public class UserServiceImpl implements UserService {
 
 		pet.givePetName(petName);
 		user.updateNickname(userNickname);
-		System.out.println("userNickname : " + userNickname);
 		userRepository.save(user);
 	}
 
