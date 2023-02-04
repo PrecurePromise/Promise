@@ -12,13 +12,14 @@ import com.pjt3.promise.response.AlarmGetRes;
 import com.pjt3.promise.response.AlarmHistoryGetRes;
 import com.pjt3.promise.response.AlarmMainGetRes;
 import com.pjt3.promise.response.AlarmOCRRes;
+import org.springframework.security.core.Authentication;
 
 public interface AlarmService {
-    int insertAlarm(User user, AlarmPostReq alarmsPostReq);
+    int insertAlarm(Authentication authentication, AlarmPostReq alarmsPostReq);
 
-	int updateAlarm(User user, AlarmPutReq alarmPutReq);
+	void updateAlarm(Authentication authentication, AlarmPutReq alarmPutReq);
 
-	int deleteAlarm(int alarmId);
+	void deleteAlarm(int alarmId);
 
 	AlarmDetailGetRes getAlarmInfo(int alarmId);
 

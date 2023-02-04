@@ -21,6 +21,20 @@ public enum ErrorCode {
     /* Auth Exception */
     EXPIRED_AUTH_TOKEN(420, "AE001", "만료된 토큰입니다."),
 
+    /* Alarm Exception */
+    CANNOT_INSERT_ALARM(500, "MAE001", "알람 등록에 실패했습니다."),
+    CANNOT_INSERT_ALARM_MEDI(500, "MAE002", "알람 약 등록에 실패했습니다."),
+    CANNOT_INSERT_ALARM_TAG(500, "MAE003", "알람 태그 등록에 실패했습니다."),
+    CANNOT_UPDATE_ALARM(500, "MAE004", "알람 수정에 실패했습니다."),
+    CANNOT_UPDATE_ALARM_MEDI(500, "MAE005", "알람 약 수정에 실패했습니다."),
+    CANNOT_UPDATE_ALARM_TAG(500, "MAE006", "알람 태그 수정에 실패했습니다."),
+    CANNOT_FIND_ALARM(404, "MAE007", "알람 정보를 찾을 수 없습니다."),
+    CANNOT_DELETE_ALARM(500, "MAE008", "알람 삭제 중에 문제가 발생했습니다."),
+
+    /* AlarmShare Exception */
+    CANNOT_INSERT_ALARM_SHARE(500, "ASE001", "알람 공유 등록에 실패했습니다."),
+    CANNOT_INSERT_ALARM_SHARE_MEDI(500, "ASE002", "알람 공유 약 등록에 실패했습니다."),
+
     ;
 
 
