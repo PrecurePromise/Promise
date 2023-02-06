@@ -84,32 +84,10 @@ public class AlarmController {
 	@PostMapping("/check")
 	public ResponseEntity<?> insertTakeHistory(Authentication authentication,
 			@RequestBody TakeHistoryPostReq takeHistoryPostReq) {
-		try {
 
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
+		alarmService.insertTakeHistory(authentication, takeHistoryPostReq);
 
-			int result = 0;
-			result = alarmService.insertTakeHistory(user, takeHistoryPostReq);
-
-			if (result == 1) {
-
-				int result2 = petService.increasePetExp(1, user);
-				if (result2 == 1) {
-					return ResponseEntity.status(200).body(BaseResponseBody.of(200, "복용 이력 등록 성공/경험치 등록 성공"));
-				} else {
-					return ResponseEntity.status(500).body(BaseResponseBody.of(500, "복용 이력 등록 성공/경험치 등록 실패"));
-				}
-
-			} else {
-				return ResponseEntity.status(500).body(BaseResponseBody.of(500, "복용 이력 등록 실패"));
-			}
-
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
-		}
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "복용 이력 등록 성공/경험치 등록 성공"));
 
 	}
 

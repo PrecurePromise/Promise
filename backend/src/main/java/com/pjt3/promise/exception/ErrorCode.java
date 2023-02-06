@@ -30,11 +30,14 @@ public enum ErrorCode {
     CANNOT_UPDATE_ALARM_TAG(500, "MAE006", "알람 태그 수정에 실패했습니다."),
     CANNOT_FIND_ALARM(404, "MAE007", "알람 정보를 찾을 수 없습니다."),
     CANNOT_DELETE_ALARM(500, "MAE008", "알람 삭제 중에 문제가 발생했습니다."),
+    CANNOT_INSERT_ALARM_TAKE_HISTORY(500, "MAE009", "알람 이력 등록 중에 문제가 발생했습니다."),
 
     /* AlarmShare Exception */
     CANNOT_INSERT_ALARM_SHARE(500, "ASE001", "알람 공유 등록에 실패했습니다."),
     CANNOT_INSERT_ALARM_SHARE_MEDI(500, "ASE002", "알람 공유 약 등록에 실패했습니다."),
 
+    /* Pet Exception */
+    CANNOT_UPDATE_PET_EXP(500, "PE001", "펫 경험치 등록 실패");
     ;
 
 

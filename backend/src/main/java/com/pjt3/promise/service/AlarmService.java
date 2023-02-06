@@ -23,7 +23,7 @@ public interface AlarmService {
 
 	AlarmDetailGetRes getAlarmInfo(int alarmId);
 
-	int insertTakeHistory(User user, TakeHistoryPostReq takeHistoryPostReq);
+	void insertTakeHistory(Authentication authentication, TakeHistoryPostReq takeHistoryPostReq);
 
 	List<AlarmGetRes> getDateAlarmList(User user, String nowDate);
 

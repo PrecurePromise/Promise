@@ -246,24 +246,25 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 	@Override
-	public int insertTakeHistory(User user, TakeHistoryPostReq takeHistoryPostReq) {
-		try {
-			TakeHistory takeHistory = TakeHistory.builder()
-					.user(user)
-					.mediAlarm(mediAlarmRepository.findMediAlarmByAlarmId(takeHistoryPostReq.getAlarmId()))
-					.thYN(takeHistoryPostReq.getThYN())
-					.build();
-			if (takeHistoryPostReq.getThYN() == 1) {
-				takeHistory.initThTime(Timestamp.valueOf(LocalDateTime.now()));
+	public void insertTakeHistory(Authentication authentication, TakeHistoryPostReq takeHistoryPostReq) {
 
-			}
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
 
-			takeHistoryRepository.save(takeHistory);
+		TakeHistory takeHistory = TakeHistory.builder()
+				.user(user)
+				.mediAlarm(mediAlarmRepository.findMediAlarmByAlarmId(takeHistoryPostReq.getAlarmId()))
+				.thYN(takeHistoryPostReq.getThYN())
+				.build();
+		if (takeHistoryPostReq.getThYN() == 1) {
+			takeHistory.initThTime(Timestamp.valueOf(LocalDateTime.now()));
 
-			return SUCCESS;
-		} catch (Exception e) {
-			return FAIL;
 		}
+
+		TakeHistory resTakeHistory = takeHistoryRepository.save(takeHistory);
+		if(resTakeHistory == null) throw new CustomException(ErrorCode.CANNOT_INSERT_ALARM_TAKE_HISTORY);
+
+		petService.increasePetExp(1, user);
 	}
 
 	@Override
