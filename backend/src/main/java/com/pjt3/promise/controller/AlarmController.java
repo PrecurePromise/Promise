@@ -93,23 +93,13 @@ public class AlarmController {
 
 	@GetMapping()
 	public ResponseEntity<?> getDateAlarmList(Authentication authentication, @RequestParam String nowDate) {
-		try {
 
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
+		List<AlarmGetRes> alarmList = alarmService.getDateAlarmList(authentication, nowDate);
 
-			List<AlarmGetRes> alarmList = alarmService.getDateAlarmList(user, nowDate);
+		Map<String, List> map = new HashMap<String, List>();
+		map.put("alarmList", alarmList);
 
-			Map<String, List> map = new HashMap<String, List>();
-			map.put("alarmList", alarmList);
-
-			return ResponseEntity.status(200).body(map);
-
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
-		}
+		return ResponseEntity.status(200).body(map);
 	}
 
 	@GetMapping("/{pageNum}")

@@ -258,7 +258,6 @@ public class AlarmServiceImpl implements AlarmService {
 				.build();
 		if (takeHistoryPostReq.getThYN() == 1) {
 			takeHistory.initThTime(Timestamp.valueOf(LocalDateTime.now()));
-
 		}
 
 		TakeHistory resTakeHistory = takeHistoryRepository.save(takeHistory);
@@ -268,15 +267,18 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 	@Override
-	public List<AlarmGetRes> getDateAlarmList(User user, String nowDate) {
+	public List<AlarmGetRes> getDateAlarmList(Authentication authentication, String nowDate) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
 
 		LocalDate now = LocalDate.parse(nowDate);
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String findDate = now.format(formatter);
 
 		List<AlarmGetRes> alarmList = mediAlarmRepositorySupport.getDateAlarmList(user, findDate);
-		return alarmList;
 
+		return alarmList;
 	}
 
 	@Override

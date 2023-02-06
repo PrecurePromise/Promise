@@ -25,7 +25,7 @@ public interface AlarmService {
 
 	void insertTakeHistory(Authentication authentication, TakeHistoryPostReq takeHistoryPostReq);
 
-	List<AlarmGetRes> getDateAlarmList(User user, String nowDate);
+	List<AlarmGetRes> getDateAlarmList(Authentication authentication, String nowDate);
 
 	AlarmHistoryGetRes getPastAlarmList(int periodType, User user);
 
