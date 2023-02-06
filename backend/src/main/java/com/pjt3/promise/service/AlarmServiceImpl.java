@@ -282,7 +282,10 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 	@Override
-	public AlarmHistoryGetRes getPastAlarmList(int pageNum, User user) {
+	public AlarmHistoryGetRes getPastAlarmList(int pageNum, Authentication authentication) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
 
 		AlarmHistoryGetRes alarmHistoryGetRes = new AlarmHistoryGetRes();
 		

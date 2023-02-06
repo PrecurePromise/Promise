@@ -27,7 +27,7 @@ public interface AlarmService {
 
 	List<AlarmGetRes> getDateAlarmList(Authentication authentication, String nowDate);
 
-	AlarmHistoryGetRes getPastAlarmList(int periodType, User user);
+	AlarmHistoryGetRes getPastAlarmList(int periodType, Authentication authentication);
 
 	List<AlarmOCRRes> getOCRMediList(String text);
 

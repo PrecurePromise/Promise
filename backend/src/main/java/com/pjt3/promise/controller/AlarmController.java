@@ -42,7 +42,6 @@ import com.pjt3.promise.service.PetService;
 public class AlarmController {
 
 	private final AlarmService alarmService;
-	private final PetService petService;
 
 	@PostMapping()
 	public ResponseEntity<?> insertAlarm(Authentication authentication, @RequestBody AlarmPostReq alarmPostReq) {
@@ -104,20 +103,11 @@ public class AlarmController {
 
 	@GetMapping("/{pageNum}")
 	public ResponseEntity<?> getPastAlarmList(Authentication authentication, @PathVariable int pageNum) {
-		try {
 
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-			
-			AlarmHistoryGetRes alarmHistoryGetRes = alarmService.getPastAlarmList(pageNum, user);
+		AlarmHistoryGetRes alarmHistoryGetRes = alarmService.getPastAlarmList(pageNum, authentication);
 
-			return ResponseEntity.status(200).body(alarmHistoryGetRes);
+		return ResponseEntity.status(200).body(alarmHistoryGetRes);
 
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
-		}
 	}
 
 	@PostMapping("/ocr")
