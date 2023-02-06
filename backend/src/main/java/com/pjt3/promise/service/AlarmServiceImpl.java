@@ -341,19 +341,20 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 	@Override
-	public List<AlarmCalendarGetRes> getMonthAlarmList(User user, String nowMonth) {
-		StringTokenizer st = new StringTokenizer(nowMonth, "-");
-		
-		Calendar c = Calendar.getInstance();
+	public List<AlarmCalendarGetRes> getMonthAlarmList(Authentication authentication, String nowMonth) {
 
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+
+		StringTokenizer st = new StringTokenizer(nowMonth, "-");
+
+		Calendar c = Calendar.getInstance();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-		
 		c.set(Calendar.YEAR, Integer.parseInt(st.nextToken()));
 		c.set(Calendar.MONTH, Integer.parseInt(st.nextToken())-1);
 		c.set(Calendar.DAY_OF_MONTH, 1);
 		
 		String firstDay = formatter.format(c.getTime());
-		
 		c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
 		
 		String lastDay = formatter.format(c.getTime());
@@ -364,15 +365,19 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 	@Override
-	public AlarmMainGetRes getMainAlarmList(User user) {
-		
+	public AlarmMainGetRes getMainAlarmList(Authentication authentication) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+
 		AlarmMainGetRes alarmMainGetRes = new AlarmMainGetRes();
 		LocalDate now = LocalDate.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String today = now.format(formatter);
+
 		List<AlarmMainListGetRes> alarmList = mediAlarmRepositorySupport.getMainAlarmList(user, today);
-		
 		alarmMainGetRes.setAlarmList(alarmList);
+
 		long count = mediAlarmRepository.countByUser(user);
 		if(count > 0) alarmMainGetRes.setPreAlarm(true);
 		else alarmMainGetRes.setPreAlarm(false);

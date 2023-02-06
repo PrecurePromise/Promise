@@ -136,33 +136,22 @@ public class AlarmController {
 
 	@GetMapping("/calendar")
 	public ResponseEntity<?> getMonthAlarmList(Authentication authentication, @RequestParam String nowMonth) {
-		try {
 
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
+		List<AlarmCalendarGetRes> alarmList = alarmService.getMonthAlarmList(authentication, nowMonth);
 
-			List<AlarmCalendarGetRes> alarmList = alarmService.getMonthAlarmList(user, nowMonth);
+		Map<String, List> map = new HashMap<String, List>();
+		map.put("alarmList", alarmList);
 
-			Map<String, List> map = new HashMap<String, List>();
-			map.put("alarmList", alarmList);
-
-			return ResponseEntity.status(200).body(map);
-
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
-		}
+		return ResponseEntity.status(200).body(map);
 	}
 
 	@GetMapping("/main")
 	public ResponseEntity<?> getMainAlarmList(Authentication authentication) {
 		try {
 
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
 
-			AlarmMainGetRes alarmMainGetRes = alarmService.getMainAlarmList(user);
+
+			AlarmMainGetRes alarmMainGetRes = alarmService.getMainAlarmList(authentication);
 
 			return ResponseEntity.status(200).body(alarmMainGetRes);
 

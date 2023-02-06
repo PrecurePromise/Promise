@@ -31,7 +31,7 @@ public interface AlarmService {
 
 	List<AlarmOCRRes> getOCRMediList(String text);
 
-	List<AlarmCalendarGetRes> getMonthAlarmList(User user, String nowMonth);
+	List<AlarmCalendarGetRes> getMonthAlarmList(Authentication authentication, String nowMonth);
 
-	AlarmMainGetRes getMainAlarmList(User user);
+	AlarmMainGetRes getMainAlarmList(Authentication authentication);
 }
