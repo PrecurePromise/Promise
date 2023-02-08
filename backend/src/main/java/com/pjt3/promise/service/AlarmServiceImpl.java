@@ -315,6 +315,9 @@ public class AlarmServiceImpl implements AlarmService {
 	
 	@Override
 	public List<AlarmOCRRes> getOCRMediList(String text) {
+
+		if(text == null) throw new CustomException(ErrorCode.NO_INPUT_OCR_TEXT);
+
 		String pattern1 = "^[0-9]*$";
 		String pattern2 = "^[a-zA-Z]*$";
 		String[] textList = text.split(" ");

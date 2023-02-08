@@ -113,25 +113,13 @@ public class AlarmController {
 	@PostMapping("/ocr")
 	public ResponseEntity<?> getOCRMediList(Authentication authentication,
 			@RequestBody AlarmOCRPostReq alarmOCRPostReq) {
-		try {
 
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-			try {
-				List<AlarmOCRRes> mediList = alarmService.getOCRMediList(alarmOCRPostReq.getText());
-				Map<String, List> map = new HashMap<String, List>();
-				map.put("mediList", mediList);
-				return ResponseEntity.status(200).body(map);
+			List<AlarmOCRRes> mediList = alarmService.getOCRMediList(alarmOCRPostReq.getText());
 
-			} catch (NullPointerException e) {
-				return ResponseEntity.status(404).body(BaseResponseBody.of(404, "입력 text null 오류"));
-			}
+			Map<String, List> map = new HashMap<String, List>();
+			map.put("mediList", mediList);
+			return ResponseEntity.status(200).body(map);
 
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
-		}
 	}
 
 	@GetMapping("/calendar")
@@ -147,18 +135,9 @@ public class AlarmController {
 
 	@GetMapping("/main")
 	public ResponseEntity<?> getMainAlarmList(Authentication authentication) {
-		try {
 
+		AlarmMainGetRes alarmMainGetRes = alarmService.getMainAlarmList(authentication);
 
-
-			AlarmMainGetRes alarmMainGetRes = alarmService.getMainAlarmList(authentication);
-
-			return ResponseEntity.status(200).body(alarmMainGetRes);
-
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
-		}
+		return ResponseEntity.status(200).body(alarmMainGetRes);
 	}
 }
