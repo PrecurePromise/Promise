@@ -12,25 +12,26 @@ import com.pjt3.promise.response.AlarmGetRes;
 import com.pjt3.promise.response.AlarmHistoryGetRes;
 import com.pjt3.promise.response.AlarmMainGetRes;
 import com.pjt3.promise.response.AlarmOCRRes;
+import org.springframework.security.core.Authentication;
 
 public interface AlarmService {
-    int insertAlarm(User user, AlarmPostReq alarmsPostReq);
+    int insertAlarm(Authentication authentication, AlarmPostReq alarmsPostReq);
 
-	int updateAlarm(User user, AlarmPutReq alarmPutReq);
+	void updateAlarm(Authentication authentication, AlarmPutReq alarmPutReq);
 
-	int deleteAlarm(int alarmId);
+	void deleteAlarm(int alarmId);
 
 	AlarmDetailGetRes getAlarmInfo(int alarmId);
 
-	int insertTakeHistory(User user, TakeHistoryPostReq takeHistoryPostReq);
+	void insertTakeHistory(Authentication authentication, TakeHistoryPostReq takeHistoryPostReq);
 
-	List<AlarmGetRes> getDateAlarmList(User user, String nowDate);
+	List<AlarmGetRes> getDateAlarmList(Authentication authentication, String nowDate);
 
-	AlarmHistoryGetRes getPastAlarmList(int periodType, User user);
+	AlarmHistoryGetRes getPastAlarmList(int periodType, Authentication authentication);
 
 	List<AlarmOCRRes> getOCRMediList(String text);
 
-	List<AlarmCalendarGetRes> getMonthAlarmList(User user, String nowMonth);
+	List<AlarmCalendarGetRes> getMonthAlarmList(Authentication authentication, String nowMonth);
 
-	AlarmMainGetRes getMainAlarmList(User user);
+	AlarmMainGetRes getMainAlarmList(Authentication authentication);
 }

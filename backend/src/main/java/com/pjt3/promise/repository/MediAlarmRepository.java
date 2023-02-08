@@ -10,8 +10,12 @@ import org.springframework.stereotype.Repository;
 import com.pjt3.promise.entity.MediAlarm;
 import com.pjt3.promise.entity.User;
 
+import javax.transaction.Transactional;
+
 @Repository
 public interface MediAlarmRepository extends JpaRepository<MediAlarm, Integer> {
 	MediAlarm findMediAlarmByAlarmId(int alarmId);
 	long countByUser(User user);
+
+	int deleteMediAlarmByAlarmId(int alarmId);
 }
