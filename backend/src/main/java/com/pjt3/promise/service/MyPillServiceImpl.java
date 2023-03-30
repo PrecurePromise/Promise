@@ -53,10 +53,13 @@ public class MyPillServiceImpl implements MyPillService {
 
 
 	@Override
-	public MyPillHistoryGetRes getMyPillHistoryList(User user, int pageNum) {
+	public MyPillHistoryGetRes getMyPillHistoryList(Authentication authentication, int pageNum) {
 		
 		MyPillHistoryGetRes myPillHistoryGetRes = new MyPillHistoryGetRes();
-		
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+
 		int limit = 5;
 
 		int total = mediAlarmRepositorySupport.getTotalCountMyPillHistoryList(user);
