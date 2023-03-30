@@ -13,6 +13,6 @@ public interface MyPillService {
 
 	Map<String, List> getMyPillMap(Authentication authentication);
 
-	MyPillHistoryGetRes getMyPillHistoryList(User user, int pageNum);
+	MyPillHistoryGetRes getMyPillHistoryList(Authentication authentication, int pageNum);
 
 }
