@@ -1,11 +1,15 @@
 package com.pjt3.promise.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import com.pjt3.promise.common.auth.PMUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.pjt3.promise.entity.AlarmShare;
@@ -35,8 +39,17 @@ public class AlarmShareServiceImpl implements AlarmShareService {
 	private final AlarmShareRepositorySupport alarmShareRepositorySupport;
 
 	@Override
-	public List<AlarmShareGetRes> getAlarmShareList(User user) {
-		return alarmShareRepositorySupport.getAlarmInfo(user);
+	public Map<String, List> getAlarmShareMap(Authentication authentication) {
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+
+		List<AlarmShareGetRes> alarmShareList = alarmShareRepositorySupport.getAlarmInfo(user);
+
+		Map<String, List> map = new HashMap<String, List>();
+		map.put("alarmShareList", alarmShareList);
+
+		return map;
+
 	}
 
 	@Transactional

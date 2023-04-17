@@ -34,23 +34,27 @@ public class AlarmShareController {
 
 	@GetMapping()
 	public ResponseEntity<?> getAlarmShareList(Authentication authentication){
-		try {
-			
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-	        
-	        List<AlarmShareGetRes> alarmShareList = alarmShareService.getAlarmShareList(user);
-	        
-	        Map<String, List> map = new HashMap<String, List>();
-			map.put("alarmShareList", alarmShareList);
-			
-			return ResponseEntity.status(200).body(map);
-			
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(400).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
-		}
+
+		Map<String, List> alarmShareMap = alarmShareService.getAlarmShareMap(authentication);
+
+		return ResponseEntity.status(200).body(alarmShareMap);
+//		try {
+//
+//			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+//			User user = userDetails.getUser();
+//
+//	        List<AlarmShareGetRes> alarmShareList = alarmShareService.getAlarmShareList(user);
+//
+//	        Map<String, List> map = new HashMap<String, List>();
+//			map.put("alarmShareList", alarmShareList);
+//
+//			return ResponseEntity.status(200).body(map);
+//
+//		} catch (NullPointerException e) {
+//			return ResponseEntity.status(400).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
+//		} catch (Exception e) {
+//			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
+//		}
 
 	}
 	
