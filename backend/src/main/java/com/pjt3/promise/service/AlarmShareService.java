@@ -11,7 +11,6 @@ import org.springframework.security.core.Authentication;
 public interface AlarmShareService {
 
 	Map<String, List> getAlarmShareMap(Authentication authentication);
-//	List<AlarmShareGetRes> getAlarmShareList(User user);
 
 	int acceptAlarmShare(User user, AlarmShareAcceptReq alarmShareAcceptReq);
 
