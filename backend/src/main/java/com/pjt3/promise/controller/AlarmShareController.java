@@ -43,24 +43,13 @@ public class AlarmShareController {
 	
 	@PostMapping("/accept")
 	public ResponseEntity<?> acceptAlarmShare(Authentication authentication, @RequestBody AlarmShareAcceptReq alarmShareAcceptReq){
-		try {	
-			
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-	        
-			int result = 0;
-	        result = alarmShareService.acceptAlarmShare(user, alarmShareAcceptReq);
-			
-	        if(result == 1) {			
-				return ResponseEntity.status(200).body(BaseResponseBody.of(200, "알람 수락 성공"));
-			} else {
-				return ResponseEntity.status(500).body(BaseResponseBody.of(500, "알람 수락 실패"));
-			}
-			
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
+
+		int result = alarmShareService.acceptAlarmShare(authentication, alarmShareAcceptReq);
+
+		if(result == 1) {
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "알람 수락 성공"));
+		} else {
+			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "알람 수락 실패"));
 		}
 
 	}

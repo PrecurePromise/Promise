@@ -12,7 +12,7 @@ public interface AlarmShareService {
 
 	Map<String, List> getAlarmShareMap(Authentication authentication);
 
-	int acceptAlarmShare(User user, AlarmShareAcceptReq alarmShareAcceptReq);
+	int acceptAlarmShare(Authentication authentication, AlarmShareAcceptReq alarmShareAcceptReq);
 
 	int rejectAlarmShare(int asId);
 

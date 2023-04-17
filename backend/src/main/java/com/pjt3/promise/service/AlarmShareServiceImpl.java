@@ -54,7 +54,11 @@ public class AlarmShareServiceImpl implements AlarmShareService {
 
 	@Transactional
 	@Override
-	public int acceptAlarmShare(User user, AlarmShareAcceptReq alarmShareAcceptReq) {
+	public int acceptAlarmShare(Authentication authentication, AlarmShareAcceptReq alarmShareAcceptReq) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+
 		try {
 
 			AlarmShare alarmShare = alarmShareRepository.findByAsId(alarmShareAcceptReq.getAsId());
