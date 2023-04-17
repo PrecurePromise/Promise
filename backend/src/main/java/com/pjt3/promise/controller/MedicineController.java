@@ -25,22 +25,12 @@ public class MedicineController {
     private final MedicineService medicineService;
 
     @GetMapping("/alarm")
-    public ResponseEntity<?> getMediAutoSearchList(Authentication authentication, @RequestParam String searchKeyword){
-        try {
-        	PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-            User user = userDetails.getUser();
-        	
-            List<MediGetRes> mediList = medicineService.getMediAutoListInfo(searchKeyword);
+    public ResponseEntity<?> getMediAutoSearchList(@RequestParam String searchKeyword){
 
-//            Map<String, List> map = new HashMap<String, List>();
-//            map.put("mediList", mediList);
+        List<MediGetRes> mediList = medicineService.getMediAutoListInfo(searchKeyword);
 
-            return ResponseEntity.status(200).body(mediList);
-        } catch (NullPointerException e) {
-        	return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));   
-        } catch(Exception e) {
-            return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
-        }
+        return ResponseEntity.status(200).body(mediList);
+
     }
 
     @GetMapping("/search")
