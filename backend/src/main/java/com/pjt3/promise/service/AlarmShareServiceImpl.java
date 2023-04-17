@@ -8,7 +8,6 @@ import javax.transaction.Transactional;
 
 import com.pjt3.promise.common.auth.PMUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +44,7 @@ public class AlarmShareServiceImpl implements AlarmShareService {
 
 		List<AlarmShareGetRes> alarmShareList = alarmShareRepositorySupport.getAlarmInfo(user);
 
-		Map<String, List> map = new HashMap<String, List>();
+		Map<String, List> map = new HashMap<>();
 		map.put("alarmShareList", alarmShareList);
 
 		return map;
@@ -101,6 +100,7 @@ public class AlarmShareServiceImpl implements AlarmShareService {
 	@Transactional
 	@Override
 	public int rejectAlarmShare(int asId) {
+
 		try {
 
 			alarmShareRepository.deleteById(asId);
