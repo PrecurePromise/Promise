@@ -1,19 +1,12 @@
 package com.pjt3.promise.controller;
 
-import com.pjt3.promise.common.auth.PMUserDetails;
-import com.pjt3.promise.common.response.BaseResponseBody;
-import com.pjt3.promise.entity.User;
 import com.pjt3.promise.response.MediDetailGetRes;
 import com.pjt3.promise.response.MediGetRes;
-import com.pjt3.promise.response.MediSearchGetRes;
 import com.pjt3.promise.service.MedicineService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,56 +18,29 @@ public class MedicineController {
     private final MedicineService medicineService;
 
     @GetMapping("/alarm")
-    public ResponseEntity<?> getMediAutoSearchList(Authentication authentication, @RequestParam String searchKeyword){
-        try {
-        	PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-            User user = userDetails.getUser();
-        	
-            List<MediGetRes> mediList = medicineService.getMediAutoListInfo(searchKeyword);
+    public ResponseEntity<?> getMediAutoSearchList(@RequestParam String searchKeyword){
 
-//            Map<String, List> map = new HashMap<String, List>();
-//            map.put("mediList", mediList);
+        List<MediGetRes> mediList = medicineService.getMediAutoListInfo(searchKeyword);
 
-            return ResponseEntity.status(200).body(mediList);
-        } catch (NullPointerException e) {
-        	return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));   
-        } catch(Exception e) {
-            return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
-        }
+        return ResponseEntity.status(200).body(mediList);
+
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> getMediSearchList(Authentication authentication, @RequestParam String searchKeyword){
-        try {
-        	PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-            User user = userDetails.getUser();
-        	
-            List<MediSearchGetRes> mediList = medicineService.getMediSearchListInfo(searchKeyword);
+    public ResponseEntity<?> getMediSearchList(@RequestParam String searchKeyword){
 
-            Map<String, List> map = new HashMap<String, List>();
-            map.put("mediList", mediList);
+        Map<String, List> mediList = medicineService.getMediSearchListInfo(searchKeyword);
 
-            return ResponseEntity.status(200).body(map);
-        } catch (NullPointerException e) {
-        	return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));   
-        } catch(Exception e) {
-            return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
-        }
+        return ResponseEntity.status(200).body(mediList);
+
     }
 
     @GetMapping("/detail/{mediSerialNum}")
-    public ResponseEntity<?> getMediDetailList(Authentication authentication, @PathVariable String mediSerialNum){
-        try {
-        	PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-            User user = userDetails.getUser();
-        	
-        	MediDetailGetRes mediInfo = medicineService.getMediDetailInfo(mediSerialNum);
+    public ResponseEntity<?> getMediDetailList(@PathVariable String mediSerialNum){
 
-            return ResponseEntity.status(200).body(mediInfo);
-        } catch (NullPointerException e) {
-        	return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));   
-        } catch(Exception e) {
-            return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
-        }
+        MediDetailGetRes mediInfo = medicineService.getMediDetailInfo(mediSerialNum);
+
+        return ResponseEntity.status(200).body(mediInfo);
+
     }
 }
