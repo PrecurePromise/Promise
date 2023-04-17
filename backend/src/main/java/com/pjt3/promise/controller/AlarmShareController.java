@@ -34,70 +34,35 @@ public class AlarmShareController {
 
 	@GetMapping()
 	public ResponseEntity<?> getAlarmShareList(Authentication authentication){
-		try {
-			
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-	        
-	        List<AlarmShareGetRes> alarmShareList = alarmShareService.getAlarmShareList(user);
-	        
-	        Map<String, List> map = new HashMap<String, List>();
-			map.put("alarmShareList", alarmShareList);
-			
-			return ResponseEntity.status(200).body(map);
-			
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(400).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
-		}
+
+		Map<String, List> alarmShareMap = alarmShareService.getAlarmShareMap(authentication);
+
+		return ResponseEntity.status(200).body(alarmShareMap);
 
 	}
 	
 	@PostMapping("/accept")
 	public ResponseEntity<?> acceptAlarmShare(Authentication authentication, @RequestBody AlarmShareAcceptReq alarmShareAcceptReq){
-		try {	
-			
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-	        
-			int result = 0;
-	        result = alarmShareService.acceptAlarmShare(user, alarmShareAcceptReq);
-			
-	        if(result == 1) {			
-				return ResponseEntity.status(200).body(BaseResponseBody.of(200, "알람 수락 성공"));
-			} else {
-				return ResponseEntity.status(500).body(BaseResponseBody.of(500, "알람 수락 실패"));
-			}
-			
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
+
+		int result = alarmShareService.acceptAlarmShare(authentication, alarmShareAcceptReq);
+
+		if(result == 1) {
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "알람 수락 성공"));
+		} else {
+			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "알람 수락 실패"));
 		}
 
 	}
 	
 	@DeleteMapping("/reject")
-	public ResponseEntity<?> rejectAlarmShare(Authentication authentication, @RequestParam int asId){
-		try {	
-	        
-			PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-			User user = userDetails.getUser();
-			
-			int result = 0;
-	        result = alarmShareService.rejectAlarmShare(asId);
-			
-	        if(result == 1) {			
-				return ResponseEntity.status(200).body(BaseResponseBody.of(200, "알람 거절 성공"));
-			} else {
-				return ResponseEntity.status(500).body(BaseResponseBody.of(500, "알람 거절 실패"));
-			}
-			
-		} catch (NullPointerException e) {
-			return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
+	public ResponseEntity<?> rejectAlarmShare(@RequestParam int asId){
+
+		int result = alarmShareService.rejectAlarmShare(asId);
+
+		if(result == 1) {
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "알람 거절 성공"));
+		} else {
+			return ResponseEntity.status(500).body(BaseResponseBody.of(500, "알람 거절 실패"));
 		}
 
 	}
