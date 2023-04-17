@@ -43,18 +43,11 @@ public class MedicineController {
     }
 
     @GetMapping("/detail/{mediSerialNum}")
-    public ResponseEntity<?> getMediDetailList(Authentication authentication, @PathVariable String mediSerialNum){
-        try {
-        	PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
-            User user = userDetails.getUser();
-        	
-        	MediDetailGetRes mediInfo = medicineService.getMediDetailInfo(mediSerialNum);
+    public ResponseEntity<?> getMediDetailList(@PathVariable String mediSerialNum){
 
-            return ResponseEntity.status(200).body(mediInfo);
-        } catch (NullPointerException e) {
-        	return ResponseEntity.status(420).body(BaseResponseBody.of(420, "만료된 토큰입니다."));   
-        } catch(Exception e) {
-            return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Internal Server Error"));
-        }
+        MediDetailGetRes mediInfo = medicineService.getMediDetailInfo(mediSerialNum);
+
+        return ResponseEntity.status(200).body(mediInfo);
+
     }
 }
