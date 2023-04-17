@@ -2,8 +2,12 @@ package com.pjt3.promise.service;
 
 import java.util.List;
 
+import com.pjt3.promise.common.auth.PMUserDetails;
+import com.pjt3.promise.exception.CustomException;
+import com.pjt3.promise.exception.ErrorCode;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,44 +23,94 @@ import com.pjt3.promise.response.ShareUserGetRes;
 import com.pjt3.promise.response.UserInfoGetRes;
 
 @Service("userService")
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-	@Autowired
-	UserRepository userRepository;
-
-	@Autowired
-	PetRepository petRepository;
-
-	@Autowired
-	PasswordEncoder passwordEncoder;
-
-	@Autowired
-	UserRepositorySupport userRepositorySupport;
+	private final PasswordEncoder passwordEncoder;
+	private final UserRepository userRepository;
+	private final PetRepository petRepository;
+	private final UserRepositorySupport userRepositorySupport;
 
 	@Override
-	public User insertUser(UserInsertPostReq userInsertInfo) {
+	public void insertUser(UserInsertPostReq userInsertInfo) {
+		boolean existedUserByUserEmail = userRepository.existsByUserEmail(userInsertInfo.getUserEmail());
+		boolean existedUserByUserNickname = userRepository.existsByUserNickname(userInsertInfo.getUserNickname());
 
-		User user = User.builder()
-				.userEmail(userInsertInfo.getUserEmail())
-				.userPassword(passwordEncoder.encode(userInsertInfo.getUserPassword()))
-				.userNickname(userInsertInfo.getUserNickname())
-				.userProfileUrl(userInsertInfo.getUserProfileUrl())
-				.userJoinType(userInsertInfo.getUserJoinType())
-				.build();
+		if (existedUserByUserEmail && existedUserByUserNickname) {
+			throw new CustomException(ErrorCode.DUPLICATED_EMAIL_NICKNAME);
+		} else if (existedUserByUserNickname) {
+			throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
+		} else if (existedUserByUserEmail) {
+			throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
+		} else {
+			User user = User.builder()
+					.userEmail(userInsertInfo.getUserEmail())
+					.userPassword(passwordEncoder.encode(userInsertInfo.getUserPassword()))
+					.userNickname(userInsertInfo.getUserNickname())
+					.userProfileUrl(userInsertInfo.getUserProfileUrl())
+					.userJoinType(userInsertInfo.getUserJoinType())
+					.build();
 
-		return userRepository.save(user);
+			userRepository.save(user);
+		}
+	}
+
+	@Override
+	public UserInfoGetRes getUserInfo(Authentication authentication) {
+		UserInfoGetRes userInfoGetRes = new UserInfoGetRes();
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+		Pet pet = petRepository.findPetByUser(user);
+
+		userInfoGetRes.setStatusCode(200);
+		userInfoGetRes.setMessage("조회에 성공했습니다.");
+		userInfoGetRes.setPetName(pet.getPetName());
+		userInfoGetRes.setPetLevel(pet.getPetLevel());
+
+		BeanUtils.copyProperties(user, userInfoGetRes);
+
+		return userInfoGetRes;
 	}
 
 	@Override
 	public User getUserByUserEmail(String userEmail) {
 		User user = userRepository.findUserByUserEmail(userEmail);
-		return user;
+
+		if (user != null) {
+			throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
+		} else {
+			return user;
+		}
 	}
 
 	@Override
 	public User getUserByUserNickname(String userNickname) {
 		User user = userRepository.findUserByUserNickname(userNickname);
-		return user;
+
+		if (user != null) {
+			throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
+		} else {
+			return user;
+		}
+	}
+
+	@Override
+	public void getUserByUserNicknameWithAuth(Authentication authentication, String userNickname) {
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+
+		User authUser = userDetails.getUser();
+		String authUserNickname = authUser.getUserNickname();
+
+		User checkUser = userRepository.findUserByUserNickname(userNickname);
+
+		if (authUserNickname.equals(userNickname)) {
+			throw new CustomException(ErrorCode.DUPLICATED_NICKNAME_OWN);
+		} else {
+			if (checkUser != null) {
+				throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
+			}
+		}
 	}
 
 	@Override
@@ -66,66 +120,60 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int deleteUser(String userEmail) {
-		return userRepository.deleteUserByUserEmail(userEmail);
-	}
+	public void deleteUser(Authentication authentication) {
 
-	@Override
-	public int update(User user, UserInfoPutReq userUpdateInfo) {
-		try {
-			String userNickname = userUpdateInfo.getUserNickname();
-			String petName = userUpdateInfo.getPetName();
-			Pet pet = petRepository.findPetByUser(user);
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		String userEmail = userDetails.getUsername();
 
-			if(userRepository.findUserByUserNickname(userNickname) != null &&
-					!user.getUserNickname().equals(userNickname)){
-				return 2;
-			}
+		int deleteRes = userRepository.deleteUserByUserEmail(userEmail);
 
-			pet.givePetName(petName);
-
-			userUpdateInfo.setUserNickname(userNickname);
-			BeanUtils.copyProperties(userUpdateInfo, user);
-			userRepository.save(user);
-			return 1;
-
-		} catch(Exception e) {
-			e.printStackTrace();
-			return 0;
+		if (deleteRes != 1) {
+			throw new CustomException(ErrorCode.CANNOT_DELETE_USER);
 		}
+
 	}
 
 	@Override
-	public int updateProfile(User user, UserProfilePostReq userProfileInfo) {
-		try {
-			String userProfileUrl = userProfileInfo.getUserProfileUrl();
-			user.updateUserProfileUrl(userProfileUrl);
-			userRepository.save(user);
-			return 1;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return 0;
-		}
-	}
+	public void update(Authentication authentication, UserInfoPutReq userUpdateInfo) {
 
-	@Override
-	public UserInfoGetRes getUserInfo(User user) {
-		UserInfoGetRes userInfo = new UserInfoGetRes();
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+
+		String userNickname = userUpdateInfo.getUserNickname();
+		String petName = userUpdateInfo.getPetName();
 		Pet pet = petRepository.findPetByUser(user);
 
-		userInfo.setStatusCode(200);
-		userInfo.setMessage("조회에 성공했습니다.");
-		userInfo.setPetName(pet.getPetName());
-		userInfo.setPetLevel(pet.getPetLevel());
+		getUserByUserNicknameWithAuth(authentication, userNickname);
 
-		BeanUtils.copyProperties(user, userInfo);
-
-		return userInfo;
+		pet.givePetName(petName);
+		user.updateNickname(userNickname);
+		userRepository.save(user);
 	}
 
 	@Override
-	public List<ShareUserGetRes> getShareUserList(String searchKeyword, String userEmail, String userNickname) {
+	public void updateProfile(Authentication authentication, UserProfilePostReq userProfileInfo) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+
+		String userProfileUrl = userProfileInfo.getUserProfileUrl();
+		user.updateUserProfileUrl(userProfileUrl);
+		userRepository.save(user);
+	}
+
+	@Override
+	public List<ShareUserGetRes> getShareUserList(Authentication authentication, String searchKeyword) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+		String userEmail = user.getUserEmail();
+		String userNickname = user.getUserNickname();
+
 		List<ShareUserGetRes> shareUserList = userRepositorySupport.getShareUserList(searchKeyword);
+
+		if (shareUserList.size() == 0) {
+			throw new CustomException(ErrorCode.CANNOT_FOUND_USER);
+		}
 
 		for (ShareUserGetRes shareUserGetRes : shareUserList) {
 			if (shareUserGetRes.getUserEmail().equals(userEmail) && shareUserGetRes.getUserNickname().equals(userNickname)) {

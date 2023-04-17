@@ -2,11 +2,16 @@ package com.pjt3.promise.service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.pjt3.promise.common.auth.PMUserDetails;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.pjt3.promise.entity.User;
@@ -16,20 +21,27 @@ import com.pjt3.promise.response.MyPillGetRes;
 import com.pjt3.promise.response.MyPillHistoryGetRes;
 
 @Service
+@RequiredArgsConstructor
 public class MyPillServiceImpl implements MyPillService {
-	
-	@Autowired
-	MediAlarmRepositorySupport mediAlarmRepositorySupport;
+
+	private final MediAlarmRepositorySupport mediAlarmRepositorySupport;
 
 	@Override
-	public List<MyPillGetRes> getMyPillList(User user) {
-		
+	public Map<String, List> getMyPillMap(Authentication authentication) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+
 		LocalDate now = LocalDate.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String today = now.format(formatter);
-		
+
 		List<MyPillGetRes> alarmList = mediAlarmRepositorySupport.getMyPillList(user, today);
-		return alarmList;
+		
+		Map<String, List> map = new HashMap<>();
+		map.put("alarmList", alarmList);
+
+		return map;
 	}
 	
     private int calcTotalPageCnt(int total, int limit) {
@@ -41,10 +53,13 @@ public class MyPillServiceImpl implements MyPillService {
 
 
 	@Override
-	public MyPillHistoryGetRes getMyPillHistoryList(User user, int pageNum) {
+	public MyPillHistoryGetRes getMyPillHistoryList(Authentication authentication, int pageNum) {
 		
 		MyPillHistoryGetRes myPillHistoryGetRes = new MyPillHistoryGetRes();
-		
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+
 		int limit = 5;
 
 		int total = mediAlarmRepositorySupport.getTotalCountMyPillHistoryList(user);

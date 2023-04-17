@@ -53,6 +53,8 @@ public class User {
         this.refreshToken = refreshToken;
     }
 
+    public void updateNickname(String userNickname) { this.userNickname = userNickname; }
+
     @Builder
     public User(String userEmail, String userPassword, String userNickname, String userProfileUrl, int userJoinType){
         this.userEmail = userEmail;

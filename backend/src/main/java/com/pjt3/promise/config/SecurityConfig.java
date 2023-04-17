@@ -1,33 +1,32 @@
 package com.pjt3.promise.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.pjt3.promise.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.pjt3.promise.common.auth.JwtAuthenticationFilter;
 import com.pjt3.promise.common.auth.PMUserDetailsService;
-import com.pjt3.promise.service.UserService;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@RequiredArgsConstructor
+public class SecurityConfig {
 
-    @Autowired
-    PMUserDetailsService pmUserDetailsService;
-
-    @Autowired
-    private UserService userService;
+    private final PMUserDetailsService pmUserDetailsService;
+    private final UserRepository userRepository;
 
     // Password 인코딩 방식으로 BCrypt 암호화 방식 사용
     @Bean
@@ -46,25 +45,41 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return daoAuthenticationProvider;
     }
 
-	//DAO 기반의 Authentication Provider가 적용되도록 설정
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(authenticationProvider());
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration =new CorsConfiguration();
+
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("https://promise-precure.site");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception{
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 사용 하지않음
+
                 .and()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(), userService)) //HTTP 요청에 JWT 토큰 인증 필터를 거치도록 필터를 추가
+                .apply(new AuthenticationManagerDSL(userRepository))
+
+                .and()
                 .authorizeRequests()
-                .antMatchers("api/**").authenticated()//인증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
-                .anyRequest().permitAll()
+                .antMatchers("/auth/**").permitAll() // 인증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
+                .antMatchers("/users/signin").permitAll()
+                .antMatchers("/users/email/**").permitAll()
+                .antMatchers("/users/nickname/**").permitAll()
+                .anyRequest().authenticated()
                 .and().cors();
+
+        return http.build();
     }
-
-
 }

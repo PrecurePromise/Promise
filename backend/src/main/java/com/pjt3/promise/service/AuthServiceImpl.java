@@ -1,10 +1,9 @@
 package com.pjt3.promise.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.pjt3.promise.common.auth.JwtAuthenticationFilter;
 import com.pjt3.promise.common.util.JwtTokenUtil;
 import com.pjt3.promise.entity.User;
 import com.pjt3.promise.repository.UserRepository;
@@ -14,18 +13,12 @@ import com.pjt3.promise.response.TokenPostRes;
 import com.pjt3.promise.response.UserLoginPostRes;
 
 @Service("AuthService")
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-	
-	@Autowired
-	UserService userService;
-	
-	@Autowired
-	UserRepository userRepository;
-	
-	@Autowired
-	PasswordEncoder passwordEncoder;
-	
-	JwtAuthenticationFilter jwtAuthenticationFilter;
+
+	private final UserService userService;
+	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	@Override
 	public UserLoginPostRes login(UserLoginPostReq loginInfo) {
@@ -35,7 +28,7 @@ public class AuthServiceImpl implements AuthService {
 		
 		try {
 			// 회원 가입 되어 있는 유저
-			User user = userService.getUserByUserEmail(userEmail);
+			User user = userRepository.findUserByUserEmail(userEmail);
 			int userJoinType = user.getUserJoinType();
 			
 			String accessToken = JwtTokenUtil.getToken(userEmail);
@@ -77,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
 		int userLoginType = loginInfo.getUserLoginType();
 		
 		try {
-			User user = userService.getUserByUserEmail(userEmail);
+			User user = userRepository.findUserByUserEmail(userEmail);
 			int userJoinType = user.getUserJoinType();
 			
 			String accessToken = JwtTokenUtil.getToken(userEmail);

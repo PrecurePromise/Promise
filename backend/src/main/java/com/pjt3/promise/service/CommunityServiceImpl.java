@@ -16,29 +16,19 @@ import com.pjt3.promise.response.CommunityListGetRes;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class CommunityServiceImpl implements CommunityService{
 
-    private static final String CommuCommentDetail = null;
-
-	@Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    CommunityRepository communityRepository;
-
-    @Autowired
-    CommunityRepositorySupport communityRepositorySupport;
-    
-    @Autowired
-    CommuCommentRepository commuCommentRepository;
-
-    @Autowired
-    CommuCommentRepositorySupport commuCommentRepositorySupport;
+    private final CommunityRepository communityRepository;
+    private final CommunityRepositorySupport communityRepositorySupport;
+    private final CommuCommentRepository commuCommentRepository;
+    private final CommuCommentRepositorySupport commuCommentRepositorySupport;
     
     @Override
     public int insertCommunityPost(String commuTitle, String commuContents, User user) {

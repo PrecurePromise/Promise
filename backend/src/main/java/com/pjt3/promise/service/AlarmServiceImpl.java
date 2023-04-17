@@ -14,7 +14,12 @@ import java.util.regex.Pattern;
 
 import javax.transaction.Transactional;
 
+import com.pjt3.promise.common.auth.PMUserDetails;
+import com.pjt3.promise.exception.CustomException;
+import com.pjt3.promise.exception.ErrorCode;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.pjt3.promise.entity.AlarmShare;
@@ -46,6 +51,7 @@ import com.pjt3.promise.response.AlarmMainListGetRes;
 import com.pjt3.promise.response.AlarmOCRRes;
 
 @Service
+@RequiredArgsConstructor
 public class AlarmServiceImpl implements AlarmService {
 
 	private static final int SUCCESS = 1;
@@ -53,95 +59,79 @@ public class AlarmServiceImpl implements AlarmService {
 
 	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-	@Autowired
-	MediAlarmRepository mediAlarmRepository;
-
-	@Autowired
-	MedicineRepository medicineRepository;
-
-	@Autowired
-	UserMedicineRepository userMedicineRepository;
-
-	@Autowired
-	TagRepository tagRepository;
-
-	@Autowired
-	UserRepository userRepository;
-
-	@Autowired
-	AlarmShareRepository alarmShareRepository;
-
-	@Autowired
-	MediAlarmRepositorySupport mediAlarmRepositorySupport;
-
-	@Autowired
-	TakeHistoryRepository takeHistoryRepository;
-
-	@Autowired
-	MedicineRepositorySupport medicineRepositorySupport;
-	
-	@Autowired
-	AlarmShareUserMedicineRepository AlarmShareUserMedicineRepository;
+	private final MediAlarmRepository mediAlarmRepository;
+	private final MedicineRepository medicineRepository;
+	private final UserMedicineRepository userMedicineRepository;
+	private final TagRepository tagRepository;
+	private final PetService petService;
+	private final UserRepository userRepository;
+	private final AlarmShareRepository alarmShareRepository;
+	private final TakeHistoryRepository takeHistoryRepository;
+	private final AlarmShareUserMedicineRepository AlarmShareUserMedicineRepository;
+	private final MedicineRepositorySupport medicineRepositorySupport;
+	private final MediAlarmRepositorySupport mediAlarmRepositorySupport;
 
 	@Transactional
 	@Override
-	public int insertAlarm(User user, AlarmPostReq alarmPostReq) {
+	public int insertAlarm(Authentication authentication, AlarmPostReq alarmPostReq) {
 
-		MediAlarm mediAlarm = null;
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
 
-		try {
+		// 알람 저장
+		MediAlarm mediAlarm = mediAlarmSetting(user, alarmPostReq);
 
-			// 알람 저장
-			mediAlarm = mediAlarmSetting(user, alarmPostReq);
-			mediAlarmRepository.save(mediAlarm);
+		MediAlarm resMediAlarm = mediAlarmRepository.save(mediAlarm);
+		if(resMediAlarm == null) throw new CustomException(ErrorCode.CANNOT_INSERT_ALARM);
 
-			// 약 내역 저장
-			userMedicineSetting(mediAlarm, alarmPostReq.getAlarmMediList());
+		// 약 내역 저장
+		userMedicineSetting(resMediAlarm, alarmPostReq.getAlarmMediList());
 
-			// 태그 저장
-			for (String prevTagName : alarmPostReq.getTagList()) {
-				String tagName = prevTagName.replaceAll("\\s", "");
-				if(tagName.equals("")) continue;
+		// 태그 저장
+		for (String prevTagName : alarmPostReq.getTagList()) {
+			String tagName = prevTagName.replaceAll("\\s", "");
+			if(tagName.equals("")) continue;
 
-				Tag tag = Tag.builder()
-						.mediAlarm(mediAlarm)
-						.user(user)
-						.tagName(tagName)
-						.build();
+			Tag tag = Tag.builder()
+					.mediAlarm(resMediAlarm)
+					.user(user)
+					.tagName(tagName)
+					.build();
 
-				tagRepository.save(tag);
-			}
+			Tag resTag = tagRepository.save(tag);
 
-			// 공유 대상자
-			for (String sharedEmail : alarmPostReq.getShareEmail()) {
-
-				// 대상자를 찾고
-				User sharedUser = userRepository.findUserByUserEmail(sharedEmail);
-
-				// 공유 알람 저장
-				AlarmShare alarmShare = AlarmShare.builder()
-						.user(sharedUser)
-						.sendUser(user)
-						.alarmTitle(alarmPostReq.getAlarmTitle())
-						.alarmYN(1)
-						.alarmTime1(alarmPostReq.getAlarmTime1())
-						.alarmTime2(alarmPostReq.getAlarmTime2())
-						.alarmTime3(alarmPostReq.getAlarmTime3())
-						.alarmDayStart(alarmPostReq.getAlarmDayStart())
-						.alarmDayEnd(alarmPostReq.getAlarmDayEnd())
-						.build();
-
-				alarmShareRepository.save(alarmShare);
-				
-				// 알람 공유 약 저장
-				alarmShareUserMedicineSetting(alarmShare, alarmPostReq.getAlarmMediList());
-			}
-
-			return mediAlarm.getAlarmId();
-
-		} catch (Exception e) {
-			return FAIL;
+			if(resTag == null) throw new CustomException(ErrorCode.CANNOT_INSERT_ALARM_TAG);
 		}
+
+		// 공유 대상자
+		for (String sharedEmail : alarmPostReq.getShareEmail()) {
+
+			// 대상자를 찾고
+			User sharedUser = userRepository.findUserByUserEmail(sharedEmail);
+			if(sharedUser == null) throw new CustomException(ErrorCode.CANNOT_FOUND_USER);
+
+			// 공유 알람 저장
+			AlarmShare alarmShare = AlarmShare.builder()
+					.user(sharedUser)
+					.sendUser(user)
+					.alarmTitle(alarmPostReq.getAlarmTitle())
+					.alarmYN(1)
+					.alarmTime1(alarmPostReq.getAlarmTime1())
+					.alarmTime2(alarmPostReq.getAlarmTime2())
+					.alarmTime3(alarmPostReq.getAlarmTime3())
+					.alarmDayStart(alarmPostReq.getAlarmDayStart())
+					.alarmDayEnd(alarmPostReq.getAlarmDayEnd())
+					.build();
+
+			AlarmShare resAlarmShare = alarmShareRepository.save(alarmShare);
+			if(resAlarmShare == null) throw new CustomException(ErrorCode.CANNOT_INSERT_ALARM_SHARE);
+
+			// 알람 공유 약 저장
+			alarmShareUserMedicineSetting(alarmShare, alarmPostReq.getAlarmMediList());
+		}
+		petService.increasePetExp(3, user);
+
+		return mediAlarm.getAlarmId();
 	}
 
 	public MediAlarm mediAlarmSetting(User user, AlarmPostReq alarmPostReq) {
@@ -151,17 +141,13 @@ public class AlarmServiceImpl implements AlarmService {
 			.alarmTitle(alarmPostReq.getAlarmTitle())
 			.build();
 
-		try {
-			mediAlarm.initAlarmDayStart(alarmPostReq.getAlarmDayStart());
-			mediAlarm.initAlarmDayEnd(alarmPostReq.getAlarmDayEnd());
-			mediAlarm.initAlarmYN(alarmPostReq.getAlarmYN());
-			if (alarmPostReq.getAlarmYN() == 1) {
-				mediAlarm.initAlarmTime1(alarmPostReq.getAlarmTime1());
-				mediAlarm.initAlarmTime2(alarmPostReq.getAlarmTime2());
-				mediAlarm.initAlarmTime3(alarmPostReq.getAlarmTime3());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		mediAlarm.initAlarmDayStart(alarmPostReq.getAlarmDayStart());
+		mediAlarm.initAlarmDayEnd(alarmPostReq.getAlarmDayEnd());
+		mediAlarm.initAlarmYN(alarmPostReq.getAlarmYN());
+		if (alarmPostReq.getAlarmYN() == 1) {
+			mediAlarm.initAlarmTime1(alarmPostReq.getAlarmTime1());
+			mediAlarm.initAlarmTime2(alarmPostReq.getAlarmTime2());
+			mediAlarm.initAlarmTime3(alarmPostReq.getAlarmTime3());
 		}
 
 		return mediAlarm;
@@ -175,7 +161,8 @@ public class AlarmServiceImpl implements AlarmService {
 					.medicine(medicineRepository.findMedicineByMediName(asumMediName))
 					.asumName(asumMediName)
 					.build();
-			AlarmShareUserMedicineRepository.save(alarmShareUserMedicine);
+			AlarmShareUserMedicine resAlarmShareUserMedicine =  AlarmShareUserMedicineRepository.save(alarmShareUserMedicine);
+			if(resAlarmShareUserMedicine == null) throw new CustomException(ErrorCode.CANNOT_INSERT_ALARM_SHARE_MEDI);
 		}
 
 	}
@@ -188,110 +175,117 @@ public class AlarmServiceImpl implements AlarmService {
 					.medicine(medicineRepository.findMedicineByMediName(userMediName))
 					.umName(userMediName).build();
 
-			userMedicineRepository.save(userMedicine);
+			UserMedicine resUserMedicine = userMedicineRepository.save(userMedicine);
+			if(resUserMedicine == null) throw new CustomException(ErrorCode.CANNOT_INSERT_ALARM_MEDI);
 		}
 
 	}
 
+	@Transactional
 	@Override
-	public int updateAlarm(User user, AlarmPutReq alarmPutReq) {
+	public void updateAlarm(Authentication authentication, AlarmPutReq alarmPutReq) {
 
-		MediAlarm mediAlarm = null;
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
 
-		try {
-			mediAlarm = mediAlarmRepository.findMediAlarmByAlarmId(alarmPutReq.getAlarmId());
+		MediAlarm mediAlarm = mediAlarmRepository.findMediAlarmByAlarmId(alarmPutReq.getAlarmId());
+		if(mediAlarm == null) throw new CustomException(ErrorCode.CANNOT_FIND_ALARM);
 
-			tagRepository.deleteByMediAlarmAlarmId(alarmPutReq.getAlarmId());
-			userMedicineRepository.deleteByMediAlarmAlarmId(alarmPutReq.getAlarmId());
+		tagRepository.deleteByMediAlarmAlarmId(alarmPutReq.getAlarmId());
+		userMedicineRepository.deleteByMediAlarmAlarmId(alarmPutReq.getAlarmId());
 
-			mediAlarm.initUser(user);
-			mediAlarm.initAlarmTitle(alarmPutReq.getAlarmTitle());
-			mediAlarm.initAlarmDayStart(alarmPutReq.getAlarmDayStart());
-			mediAlarm.initAlarmDayEnd(alarmPutReq.getAlarmDayEnd());
-			mediAlarm.initAlarmYN(alarmPutReq.getAlarmYN());
-			if (alarmPutReq.getAlarmYN() == 1) {
-				mediAlarm.initAlarmTime1(alarmPutReq.getAlarmTime1());
-				mediAlarm.initAlarmTime2(alarmPutReq.getAlarmTime2());
-				mediAlarm.initAlarmTime3(alarmPutReq.getAlarmTime3());
-			}
-			mediAlarmRepository.save(mediAlarm);
+		mediAlarm.initUser(user);
+		mediAlarm.initAlarmTitle(alarmPutReq.getAlarmTitle());
+		mediAlarm.initAlarmDayStart(alarmPutReq.getAlarmDayStart());
+		mediAlarm.initAlarmDayEnd(alarmPutReq.getAlarmDayEnd());
+		mediAlarm.initAlarmYN(alarmPutReq.getAlarmYN());
+		if (alarmPutReq.getAlarmYN() == 1) {
+			mediAlarm.initAlarmTime1(alarmPutReq.getAlarmTime1());
+			mediAlarm.initAlarmTime2(alarmPutReq.getAlarmTime2());
+			mediAlarm.initAlarmTime3(alarmPutReq.getAlarmTime3());
+		}
+		MediAlarm resMediAlarm = mediAlarmRepository.save(mediAlarm);
+		if(resMediAlarm == null) throw new CustomException(ErrorCode.CANNOT_UPDATE_ALARM);
 
-			userMedicineSetting(mediAlarm, alarmPutReq.getAlarmMediList());
+		userMedicineSetting(mediAlarm, alarmPutReq.getAlarmMediList());
 
-			for (String prevTagName : alarmPutReq.getTagList()) {
-				String tagName = prevTagName.replaceAll("\\s", "");
-				if(tagName.equals("")) continue;
+		for (String prevTagName : alarmPutReq.getTagList()) {
+			String tagName = prevTagName.replaceAll("\\s", "");
+			if(tagName.equals("")) continue;
 
-				Tag tag = Tag.builder()
-						.mediAlarm(mediAlarm)
-						.user(user)
-						.tagName(tagName)
-						.build();
+			Tag tag = Tag.builder()
+					.mediAlarm(mediAlarm)
+					.user(user)
+					.tagName(tagName)
+					.build();
 
-				tagRepository.save(tag);
-			}
-
-			return SUCCESS;
-
-		} catch (Exception e) {
-			return FAIL;
+			Tag resTag = tagRepository.save(tag);
+			if(resTag == null) throw new CustomException(ErrorCode.CANNOT_UPDATE_ALARM_TAG);
 		}
 	}
 
+	@Transactional
 	@Override
-	public int deleteAlarm(int alarmId) {
-		try {
+	public void deleteAlarm(int alarmId) {
 
-			MediAlarm mediAlarm = mediAlarmRepository.findMediAlarmByAlarmId(alarmId);
+		MediAlarm mediAlarm = mediAlarmRepository.findMediAlarmByAlarmId(alarmId);
+		if(mediAlarm == null) throw new CustomException(ErrorCode.CANNOT_FIND_ALARM);
 
-			mediAlarmRepository.delete(mediAlarm);
+		int res = mediAlarmRepository.deleteMediAlarmByAlarmId(mediAlarm.getAlarmId());
+		if(res != 1) throw new CustomException(ErrorCode.CANNOT_DELETE_ALARM);
 
-			return SUCCESS;
-		} catch (Exception e) {
-			return FAIL;
-		}
 	}
 
 	@Override
 	public AlarmDetailGetRes getAlarmInfo(int alarmId) {
-		return mediAlarmRepositorySupport.getAlarmInfo(alarmId);
+
+		AlarmDetailGetRes alarmDetailGetRes = mediAlarmRepositorySupport.getAlarmInfo(alarmId);
+		if(alarmDetailGetRes == null) throw new CustomException(ErrorCode.CANNOT_FIND_ALARM);
+
+		return alarmDetailGetRes;
 	}
 
 	@Override
-	public int insertTakeHistory(User user, TakeHistoryPostReq takeHistoryPostReq) {
-		try {
-			TakeHistory takeHistory = TakeHistory.builder()
-					.user(user)
-					.mediAlarm(mediAlarmRepository.findMediAlarmByAlarmId(takeHistoryPostReq.getAlarmId()))
-					.thYN(takeHistoryPostReq.getThYN())
-					.build();
-			if (takeHistoryPostReq.getThYN() == 1) {
-				takeHistory.initThTime(Timestamp.valueOf(LocalDateTime.now()));
+	public void insertTakeHistory(Authentication authentication, TakeHistoryPostReq takeHistoryPostReq) {
 
-			}
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
 
-			takeHistoryRepository.save(takeHistory);
-
-			return SUCCESS;
-		} catch (Exception e) {
-			return FAIL;
+		TakeHistory takeHistory = TakeHistory.builder()
+				.user(user)
+				.mediAlarm(mediAlarmRepository.findMediAlarmByAlarmId(takeHistoryPostReq.getAlarmId()))
+				.thYN(takeHistoryPostReq.getThYN())
+				.build();
+		if (takeHistoryPostReq.getThYN() == 1) {
+			takeHistory.initThTime(Timestamp.valueOf(LocalDateTime.now()));
 		}
+
+		TakeHistory resTakeHistory = takeHistoryRepository.save(takeHistory);
+		if(resTakeHistory == null) throw new CustomException(ErrorCode.CANNOT_INSERT_ALARM_TAKE_HISTORY);
+
+		petService.increasePetExp(1, user);
 	}
 
 	@Override
-	public List<AlarmGetRes> getDateAlarmList(User user, String nowDate) {
+	public List<AlarmGetRes> getDateAlarmList(Authentication authentication, String nowDate) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
 
 		LocalDate now = LocalDate.parse(nowDate);
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String findDate = now.format(formatter);
 
 		List<AlarmGetRes> alarmList = mediAlarmRepositorySupport.getDateAlarmList(user, findDate);
-		return alarmList;
 
+		return alarmList;
 	}
 
 	@Override
-	public AlarmHistoryGetRes getPastAlarmList(int pageNum, User user) {
+	public AlarmHistoryGetRes getPastAlarmList(int pageNum, Authentication authentication) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
 
 		AlarmHistoryGetRes alarmHistoryGetRes = new AlarmHistoryGetRes();
 		
@@ -321,6 +315,9 @@ public class AlarmServiceImpl implements AlarmService {
 	
 	@Override
 	public List<AlarmOCRRes> getOCRMediList(String text) {
+
+		if(text == null) throw new CustomException(ErrorCode.NO_INPUT_OCR_TEXT);
+
 		String pattern1 = "^[0-9]*$";
 		String pattern2 = "^[a-zA-Z]*$";
 		String[] textList = text.split(" ");
@@ -347,19 +344,20 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 	@Override
-	public List<AlarmCalendarGetRes> getMonthAlarmList(User user, String nowMonth) {
-		StringTokenizer st = new StringTokenizer(nowMonth, "-");
-		
-		Calendar c = Calendar.getInstance();
+	public List<AlarmCalendarGetRes> getMonthAlarmList(Authentication authentication, String nowMonth) {
 
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+
+		StringTokenizer st = new StringTokenizer(nowMonth, "-");
+
+		Calendar c = Calendar.getInstance();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-		
 		c.set(Calendar.YEAR, Integer.parseInt(st.nextToken()));
 		c.set(Calendar.MONTH, Integer.parseInt(st.nextToken())-1);
 		c.set(Calendar.DAY_OF_MONTH, 1);
 		
 		String firstDay = formatter.format(c.getTime());
-		
 		c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
 		
 		String lastDay = formatter.format(c.getTime());
@@ -370,15 +368,19 @@ public class AlarmServiceImpl implements AlarmService {
 	}
 
 	@Override
-	public AlarmMainGetRes getMainAlarmList(User user) {
-		
+	public AlarmMainGetRes getMainAlarmList(Authentication authentication) {
+
+		PMUserDetails userDetails = (PMUserDetails) authentication.getDetails();
+		User user = userDetails.getUser();
+
 		AlarmMainGetRes alarmMainGetRes = new AlarmMainGetRes();
 		LocalDate now = LocalDate.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String today = now.format(formatter);
+
 		List<AlarmMainListGetRes> alarmList = mediAlarmRepositorySupport.getMainAlarmList(user, today);
-		
 		alarmMainGetRes.setAlarmList(alarmList);
+
 		long count = mediAlarmRepository.countByUser(user);
 		if(count > 0) alarmMainGetRes.setPreAlarm(true);
 		else alarmMainGetRes.setPreAlarm(false);
