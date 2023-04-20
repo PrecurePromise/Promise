@@ -12,6 +12,8 @@ import com.pjt3.promise.request.UserLoginPostReq;
 import com.pjt3.promise.response.TokenPostRes;
 import com.pjt3.promise.response.UserLoginPostRes;
 
+import java.util.Date;
+
 @Service("AuthService")
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -107,10 +109,11 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public TokenPostRes reissue(TokenPostReq refreshToken) {
 		String token = refreshToken.getRefreshToken();
+
 		if (JwtTokenUtil.validateToken(token)) {
 			User user = userService.getUserByRefreshToken(token);
 			if (user == null) {
-				return new TokenPostRes(420, "올바른 사용자가 아닙니다.", null, null);
+				return new TokenPostRes(422, "올바른 사용자가 아닙니다.", null, null);
 			}
 			String userEmail = user.getUserEmail();
 			
@@ -128,6 +131,6 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	
-	
+
 
 }
