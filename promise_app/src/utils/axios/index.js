@@ -2,17 +2,34 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 let request = axios.create({
-  baseURL: 'https://promise-precure.site/api',
+  baseURL: 'http://localhost:8080/api',
+  // baseURL: 'https://promise-precure.site/api',
 });
 
 request.interceptors.request.use(
   async (config)=>{
-    if (await AsyncStorage.getItem('token')) {
-      config.headers['Authorization'] = await AsyncStorage.getItem('token');
+    console.log("request interceptor 실행 ");
+    // console.log("accessToken : " + await AsyncStorage.getItem('accesstoken'));
+    if (await AsyncStorage.getItem('accessToken')) {
+      config.headers['Authorization'] = await AsyncStorage.getItem('accessToken');
+    } else {
+      config.headers['Authorization'] = '';
     }
     return config;
   }
 );
+
+// interceptor API 다중 요청 처리 로직
+let isTokenRefreshing = false;
+let refreshSubscribers = [];
+
+const onTokenRefreshed = (accessToken) => {
+  refreshSubscribers.map((callback) => callback(accessToken));
+};
+
+const addRefreshSubscriber = (callback) => {
+  refreshSubscribers.push(callback);
+};
 
 request.interceptors.response.use(
   (response) => {
@@ -20,33 +37,134 @@ request.interceptors.response.use(
   },
   async(err)=>{
     const originalConfig = err.config;
-    if(err.response){
-      if(err.response.status === 420 && !originalConfig.retry){
-        originalConfig.retry = true;
-        try{
-          const refresh = await request.post('/auth/reissue',{
-                            refreshToken : await AsyncStorage.getItem('refresh')
-                          }).then((response) => response.data)
-          AsyncStorage.removeItem('refresh');
-          AsyncStorage.removeItem('token');
-          AsyncStorage.setItem('refresh',refresh.refreshToken);
-          setToken(refresh.accessToken);
-          request.defaults.headers.common['Authorization'] = 'Bearer ' + refresh.accessToken;
-          return request(originalConfig);
-        }catch(error){
-          if (error.response && error.response.data){
-            return Promise.reject(error.response.data);
-          }
-          return Promise.reject(error);
-        }
+
+    console.log("\n ----------- 200 외의 응답 감지 ------------- \n");
+    console.log("err config url : " + originalConfig.baseURL + originalConfig.url 
+    + "\n method : " + originalConfig.method
+    + "\n headers[Authorization] : " + originalConfig.headers.Authorization);
+
+    // if(err.response.status === 420 && err.response.data.code === 'AE001'){
+    if(err.response.status === 420){
+      console.log("에러 statusCode : " + err.response.status);
+      console.log("error response data : \n" + JSON.stringify(err.response.data));
+      // isTokenRefreshing이 false 인 경우만 token reissue 요청
+      if (!isTokenRefreshing) {
+        console.log("reissue 호출 과정 시작 ");
+        isTokenRefreshing = true;
+        
+        const curRefreshToken = await AsyncStorage.getItem('refreshToken');
+
+        AsyncStorage.removeItem('refreshToken');
+        AsyncStorage.removeItem('accessToken');
+
+        const data = await request.post('/auth/reissue',{
+                          refreshToken : curRefreshToken
+                        }).then((response) => {
+                          response.data
+
+                          AsyncStorage.setItem('refreshToken', response.data.newRefreshToken);
+                          setToken(response.data.newAccessToken);
+
+                        }).catch((err) => {
+                          err.response.data
+                        });
+                                    
+        const newAccessToken = await AsyncStorage.getItem('accessToken');
+
+        isTokenRefreshing = false;
+        request.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+
+        // 새로운 토큰으로 지연되었던 요청 진행
+        onTokenRefreshed(newAccessToken);
+        
+        return request(originalConfig);
       }
+      // 토큰이 재발급 되는 동안의 요청은 refreshSubscribers에 저장
+      const retryOriginalRequest = new Promise((resolve) => {
+        addRefreshSubscriber((accessToken) => {
+          originalConfig.headers.Authorization = 'Bearer ' + accessToken;
+          resolve(request(originalConfig));
+        });
+      });
+      return retryOriginalRequest;
     }
     return Promise.reject(err);
   }
-)
+);
+// request.interceptors.response.use(
+//   (response) => {
+//     return response;
+//   },
+//   async(err)=>{
+//     const originalConfig = err.config;
+
+//     if(err.response){
+//       if(err.response.status === 420 && !originalConfig.retry){
+//         // isTokenRefreshing이 false 인 경우만 token reissue 요청
+//         if (!isTokenRefreshing) {
+
+//           isTokenRefreshing = true;
+          
+//           originalConfig.retry = true;
+//           try{
+//             const curAccessToken = await AsyncStorage.getItem('accessToken');
+//             const curRefreshToken = await AsyncStorage.getItem('refreshToken');
+
+//             AsyncStorage.removeItem('refreshToken');
+//             AsyncStorage.removeItem('accessToken');
+
+//             await request.post('/auth/reissue',{
+//                               refreshToken : curRefreshToken
+//                             }).then((response) => {
+//                               response.data
+
+//                               AsyncStorage.setItem('refreshToken', response.data.refreshToken);
+//                               setToken(response.data.accessToken);
+                              
+//                             })
+
+//             // AsyncStorage.removeItem('refreshToken');
+//             // AsyncStorage.removeItem('accessToken');
+//             // console.log("AsyncStorage의 refresh, access 토큰을 지웠습니다.");
+
+//             // AsyncStorage.setItem('refreshToken',refresh.refreshToken);
+//             // setToken(refresh.accessToken);
+
+//             const accessToken = await AsyncStorage.getItem('accessToken');
+//             console.log("newAccessToken : " + accessToken);
+//             console.log("AsyncStorage에 새 refresh, access 토큰을 저장했습니다.");
+            
+//             isTokenRefreshing = false;
+//             request.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;
+
+//             // 새로운 토큰으로 지연되었던 요청 진행
+//             onTokenRefreshed(accessToken);
+
+//             return request(originalConfig);
+//           }catch(error){
+//             if (error.response && error.response.data){
+//               return Promise.reject(error.response.data);
+//             }
+//             return Promise.reject(error);
+//           }
+//           // 토큰이 재발급 되는 동안의 요청은 refreshSubscribers에 저장
+//           const retryOriginalRequest = new Promise((resolve) => {
+//             addRefreshSubscriber((accessToken) => {
+//               originalConfig.headers.Authorization = 'Bearer ' + accessToken;
+//               resolve(axios(originalConfig));
+//             });
+//           });
+//           return retryOriginalRequest;
+//         }
+        
+//       }
+//     }
+//     return Promise.reject(err);
+//   }
+// )
 
 function setToken(value) {
-  AsyncStorage.setItem('token', `Bearer ${value}`);
+  AsyncStorage.setItem('accessToken', `Bearer ${value}`);
 }
 
 export const myinfo = async () => {
@@ -288,8 +406,9 @@ export const userAPI = {
         userLoginType,
       })
       .then(response => {
-        AsyncStorage.setItem('refresh', response.data.refreshToken);
+        AsyncStorage.setItem('refreshToken', response.data.refreshToken);
         setToken(response.data.accessToken);
+        return response.data.statusCode;
       })
       .catch(error => {
         return error.response.status;
@@ -303,7 +422,7 @@ export const userAPI = {
         userLoginType,
       })
       .then(response => {
-        AsyncStorage.setItem('refresh', response.data.refreshToken);
+        AsyncStorage.setItem('refreshToken', response.data.refreshToken);
         setToken(response.data.accessToken);
       })
       .catch(error => {
@@ -319,7 +438,7 @@ export const userAPI = {
     userJoinType,
   ) => {
     return await request
-      .post('/users', {
+      .post('/users/signin', {
         userEmail,
         userPassword,
         userNickname,
