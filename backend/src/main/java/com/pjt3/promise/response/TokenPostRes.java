@@ -12,6 +12,6 @@ import lombok.Setter;
 public class TokenPostRes {
 	int statusCode;
 	String message;
-	String accessToken;
-	String refreshToken;
+	String newAccessToken;
+	String newRefreshToken;
 }
