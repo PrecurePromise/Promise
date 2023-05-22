@@ -12,9 +12,11 @@ import ShareUser from '../../components/ShareUser';
 import OCRModal from '../../components/OCRModal';
 import DirectModal from '../../components/DirectModal';
 import Moment from 'moment';
+import "moment/locale/ko";
 import PillModal from '../../components/PillModal';
 import Notifications from '../../utils/Notifications';
 import {enrollAlarm} from '../../utils/axios';
+
 
 const AlarmAdd = ({navigation}) => {
   const [spinVisible, setSpinvisible] = useState();
@@ -190,7 +192,7 @@ const AlarmAdd = ({navigation}) => {
   };
 
   const setNotification = async(alarmId)=>{
-    Moment.locale('kr');
+    Moment.locale('ko');
     let nowTime = Moment().toDate();
     let cur = Moment(myStartDate()).toDate();
     let end = Moment(myendDate()).toDate();

@@ -2,8 +2,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 let request = axios.create({
-  baseURL: 'http://localhost:8080/api',
-  // baseURL: 'https://promise-precure.site/api',
+  // baseURL: 'http://localhost:8080/api',
+  baseURL: 'https://promise-precure.site/api',
 });
 
 request.interceptors.request.use(
