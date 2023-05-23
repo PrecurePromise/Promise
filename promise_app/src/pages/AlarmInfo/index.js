@@ -10,6 +10,7 @@ import AddPill from '../../components/AddPill';
 import OCRModal from '../../components/OCRModal';
 import DirectModal from '../../components/DirectModal';
 import Moment from 'moment';
+import "moment/locale/ko";
 import PillModal from '../../components/PillModal';
 import Notifications from '../../utils/Notifications';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -217,7 +218,7 @@ const AlarmInfo = (props) => {
   };
 
   const setNotification = async(alarmId)=>{
-    Moment.locale('kr');
+    Moment.locale('ko');
     let nowTime = Moment().toDate();
     let cur = Moment(myStartDate()).toDate();
     let end = Moment(myendDate()).toDate();

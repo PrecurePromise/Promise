@@ -22,8 +22,8 @@ const Mypage = ({navigation}) => {
             [{
                 text:'예',
                 onPress : ()=>{
-                    AsyncStorage.removeItem('token');
-                    AsyncStorage.removeItem('refresh');
+                    AsyncStorage.removeItem('accessToken');
+                    AsyncStorage.removeItem('refreshToken');
                     navigation.replace('LoginScreen');
                 }
             },{
@@ -77,8 +77,8 @@ const Mypage = ({navigation}) => {
                 [{
                     text:'확인',
                     onPress: ()=>{
-                        AsyncStorage.removeItem('token');
-                        AsyncStorage.removeItem('refresh');
+                        AsyncStorage.removeItem('accessToken');
+                        AsyncStorage.removeItem('refreshToken');
                         navigation.replace('LoginScreen');
                     }
                 }]

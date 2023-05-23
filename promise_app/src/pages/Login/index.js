@@ -23,7 +23,7 @@ const Login = (props) => {
   const [spinVisible, setSpinvisible] = useState();
 
   async function checkLogin(){
-    if(await AsyncStorage.getItem('refresh')!==null){
+    if(await AsyncStorage.getItem('refreshToken')!==null){
       props.navigation.replace('appscreen');
     }
   }
@@ -58,6 +58,22 @@ const Login = (props) => {
     setSpinvisible(false);
   };
 
+  const NomalLogin = async (data) =>{
+    const res = await userAPI.login(data.id, data.pw, 0);
+
+    if(res===404){
+      alert('존재하지 않는 계정입니다.');
+    }else if(res===402){
+      alert('Google 계정으로 가입된 계정입니다. Google로 계속하기를 시도해주세요.');      
+    }else if(res===403){
+      alert('Apple 계정으로 가입된 계정입니다. Apple로 계속하기를 시도해주세요.');      
+    }else if(res===401){
+      alert('잘못된 비밀번호입니다.');      
+    }else {
+      props.navigation.replace('appscreen');
+    }
+  };
+
   const normalData = async(data) =>{
     try{
       setSpinvisible(true);
@@ -87,23 +103,6 @@ const Login = (props) => {
       setSpinvisible(false);
     }
   };
-
-  const NomalLogin = async (data) =>{
-    setSpinvisible(true);
-    const res = await userAPI.login(data.id, data.pw, 0);
-    setSpinvisible(false);
-    if(res===404){
-      alert('존재하지 않는 계정입니다.');
-    }else if(res===402){
-      alert('Google 계정으로 가입된 계정입니다. Google로 계속하기를 시도해주세요.');
-    }else if(res===403){
-      alert('Apple 계정으로 가입된 계정입니다. Apple로 계속하기를 시도해주세요.');
-    }else if(res===401){
-      alert('잘못된 비밀번호입니다.');
-    }else{
-      props.navigation.replace('appscreen');
-    }
-  }
 
   return (
     <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
