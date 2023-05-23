@@ -54,7 +54,7 @@ const HomePage = ({navigation}) => {
     }
     
     const setNotification = async(alarmId, title, pillList, myStartDate, myendDate, selectTime1, selectTime2, selectTime3)=>{
-        Moment.locale('kr');
+        Moment.locale('ko');
         let nowTime = Moment().toDate();
         let cur = Moment(myStartDate).toDate();
         let end = Moment(myendDate).toDate();

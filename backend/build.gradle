@@ -52,6 +52,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web-services'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+	// JUnit
+	implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+
 	// MySQL
 	runtimeOnly 'mysql:mysql-connector-java'
 
