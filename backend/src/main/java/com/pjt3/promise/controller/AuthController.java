@@ -1,5 +1,6 @@
 package com.pjt3.promise.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import com.pjt3.promise.response.UserLoginPostRes;
 import com.pjt3.promise.service.AuthService;
 import com.pjt3.promise.service.UserService;
 
+@Api(tags={"로그인 및 토큰 재발급"})
 @RequestMapping("/auth")
 @RestController
 @RequiredArgsConstructor

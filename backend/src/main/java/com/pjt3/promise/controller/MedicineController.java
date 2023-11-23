@@ -3,6 +3,7 @@ package com.pjt3.promise.controller;
 import com.pjt3.promise.response.MediDetailGetRes;
 import com.pjt3.promise.response.MediGetRes;
 import com.pjt3.promise.service.MedicineService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@Api(tags={"약 정보"})
 @RequestMapping("/medicines")
 @RestController
 @RequiredArgsConstructor

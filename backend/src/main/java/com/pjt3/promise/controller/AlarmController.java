@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,7 @@ import com.pjt3.promise.response.AlarmOCRRes;
 import com.pjt3.promise.service.AlarmService;
 import com.pjt3.promise.service.PetService;
 
+@Api(tags={"알람"})
 @RequestMapping("/alarms")
 @RestController
 @RequiredArgsConstructor

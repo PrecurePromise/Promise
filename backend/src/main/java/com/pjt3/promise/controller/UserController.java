@@ -2,6 +2,7 @@ package com.pjt3.promise.controller;
 
 import java.util.List;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,6 +25,7 @@ import com.pjt3.promise.response.UserInfoGetRes;
 import com.pjt3.promise.service.PetService;
 import com.pjt3.promise.service.UserService;
 
+@Api(tags={"회원"})
 @RequestMapping("/users")
 @RestController
 @RequiredArgsConstructor

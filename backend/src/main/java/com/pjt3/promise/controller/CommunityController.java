@@ -13,12 +13,14 @@ import com.pjt3.promise.response.CommunityListGetRes;
 import com.pjt3.promise.response.MyPillHistoryGetRes;
 import com.pjt3.promise.service.CommunityService;
 import com.pjt3.promise.service.PetService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+@Api(tags={"게시판"})
 @RequestMapping("/communities")
 @RestController
 @RequiredArgsConstructor

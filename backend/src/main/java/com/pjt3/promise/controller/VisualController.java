@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import com.pjt3.promise.entity.User;
 import com.pjt3.promise.response.UsersTagGetRes;
 import com.pjt3.promise.service.VisualService;
 
+@Api(tags={"시각화그래프"})
 @RequestMapping("/visual")
 @RestController
 @RequiredArgsConstructor

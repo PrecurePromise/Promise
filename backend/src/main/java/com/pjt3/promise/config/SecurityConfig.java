@@ -77,6 +77,11 @@ public class SecurityConfig {
                 .antMatchers("/users/signin").permitAll()
                 .antMatchers("/users/email/**").permitAll()
                 .antMatchers("/users/nickname/**").permitAll()
+
+                .antMatchers("/v2/api-docs").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers("/swagger-resources/**").permitAll()
+                .antMatchers("/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
                 .and().cors();
 
