@@ -3,6 +3,9 @@ package com.pjt3.promise.controller;
 import java.util.List;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -35,6 +38,15 @@ public class UserController {
 	private final PetService petService;
 
 	// 회원가입
+	@ApiOperation(value="회원가입", notes="새로 회원가입을 하면서 유저를 생성하며, 펫이 자동으로 함께 생성됩니다.")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "userEmail", value = "이메일", required = true),
+			@ApiImplicitParam(name = "userPassword", value = "비밀번호", required = true),
+			@ApiImplicitParam(name = "userNickname", value = "닉네임", required = true),
+			@ApiImplicitParam(name = "userProfileUrl", value = "프로필 URL"),
+			@ApiImplicitParam(name = "petName", value = "펫 이름", required = true),
+			@ApiImplicitParam(name = "userJoinType", value = "유저 가입 타입", required = true)
+	})
 	@PostMapping("/signin")
 	public ResponseEntity<BaseResponseBody> insertUser(@RequestBody UserInsertPostReq insertInfo){
 
